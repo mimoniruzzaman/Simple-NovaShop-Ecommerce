@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->string('gateway');
+            $table->enum('status', ['pending', 'processing', 'delivered', 'cancelled'])->default('pending');
             $table->string('gateway_reference')->nullable();
             $table->json('raw_callback_payload')->nullable();
             $table->timestamp('verified_at')->nullable();
