@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import MiniCart from '@/components/MiniCart.vue';
+import { useBuyNow } from '@/composables/useBuyNow';
 import { useCart } from '@/composables/useCart';
 import { useWishlist } from '@/composables/useWishlist';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { ChevronLeft, ChevronRight, Heart, Menu, Minus, Plus, Search, Star, UserRound, X } from 'lucide-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import './ProductDetails.css';
@@ -88,6 +89,7 @@ let toastTimer: number | undefined;
 
 const { wishlistCount, isInWishlist, toggleWishlist } = useWishlist();
 const { addItem } = useCart();
+const { setBuyNow } = useBuyNow();
 const wishlistProduct = {
     name: product.name,
     price: product.price,
@@ -124,8 +126,8 @@ function addToCart() {
 }
 
 function buyNow() {
-    addItem(product, quantity.value);
-    showToast('Added to cart - checkout is coming next');
+    setBuyNow(product, quantity.value);
+    router.visit('/checkout');
 }
 
 function addRelatedToCart(item: (typeof relatedProducts)[number]) {

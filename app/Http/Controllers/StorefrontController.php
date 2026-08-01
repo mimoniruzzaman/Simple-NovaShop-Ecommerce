@@ -14,12 +14,22 @@ class StorefrontController extends Controller
 
     public function shop(): Response
     {
-        return Inertia::render('Home');
+        return Inertia::render('Shop');
     }
 
     public function wishlist(): Response
     {
         return Inertia::render('Wishlist');
+    }
+
+    public function cart(): Response
+    {
+        return Inertia::render('Cart');
+    }
+
+    public function checkout(): Response
+    {
+        return Inertia::render('Checkout');
     }
 
     public function product(string $slug): Response

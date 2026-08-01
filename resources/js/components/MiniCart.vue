@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { useBuyNow } from '@/composables/useBuyNow';
 import { useCart } from '@/composables/useCart';
+import { Link } from '@inertiajs/vue3';
 import { Minus, Plus, ShoppingCart, Trash2, X } from 'lucide-vue-next';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import './MiniCart.css';
@@ -7,6 +9,7 @@ import './MiniCart.css';
 defineProps<{ buttonClass?: string }>();
 
 const { cartItems, cartCount, cartSubtotal, removeItem, updateItemQuantity } = useCart();
+const { clearBuyNow } = useBuyNow();
 const cartOpen = ref(false);
 const cartRoot = ref<HTMLElement | null>(null);
 
@@ -16,6 +19,11 @@ function formatPrice(price: number) {
 
 function closeCart() {
     cartOpen.value = false;
+}
+
+function checkoutCart() {
+    clearBuyNow();
+    closeCart();
 }
 
 function handleDocumentClick(event: MouseEvent) {
@@ -93,8 +101,8 @@ onBeforeUnmount(() => {
                 <div class="cart-subtotal">
                     <span>Subtotal</span><strong>{{ formatPrice(cartSubtotal) }}</strong>
                 </div>
-                <a class="button button-outline" href="/shop" @click="closeCart">View Cart</a>
-                <a class="button button-primary" href="/checkout" @click="closeCart">Checkout</a>
+                <Link class="button button-outline" href="/cart" @click="closeCart">View Cart</Link>
+                <Link class="button button-primary" href="/checkout" @click="checkoutCart">Checkout</Link>
             </div>
         </aside>
     </div>

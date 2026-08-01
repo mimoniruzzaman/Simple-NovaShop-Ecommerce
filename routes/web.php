@@ -10,6 +10,10 @@ Route::get('shop', [StorefrontController::class, 'shop'])->name('shop');
 
 Route::get('wishlist', [StorefrontController::class, 'wishlist'])->name('wishlist');
 
+Route::get('cart', [StorefrontController::class, 'cart'])->name('cart');
+
+Route::get('checkout', [StorefrontController::class, 'checkout'])->name('checkout');
+
 Route::get('products/{slug}', [StorefrontController::class, 'product'])->name('products.show');
 
 Route::get('dashboard', function () {

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import MiniCart from '@/components/MiniCart.vue';
+import { useBuyNow } from '@/composables/useBuyNow';
 import { useCart, type CartProduct } from '@/composables/useCart';
 import { useWishlist, type WishlistProduct } from '@/composables/useWishlist';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { ChevronLeft, ChevronRight, Facebook, Heart, Instagram, Menu, Search, Star, Trash2, UserRound, X } from 'lucide-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import './Home.css';
@@ -75,6 +76,7 @@ let toastTimer: number | undefined;
 
 const activeSlide = computed(() => slides[currentSlide.value]);
 const { addItem } = useCart();
+const { setBuyNow } = useBuyNow();
 const { wishlistItems, wishlistCount, toggleWishlist: toggleWishlistItem, isInWishlist } = useWishlist();
 
 function formatPrice(price: number) {
@@ -111,6 +113,11 @@ function restartAutoplay() {
 function addToCart(product: Product) {
     addItem(product);
     showToast('Added to cart');
+}
+
+function buyNow(product: Product) {
+    setBuyNow(product, 1);
+    router.visit('/checkout');
 }
 
 function toggleWishlist(product?: Product) {
@@ -179,7 +186,7 @@ onBeforeUnmount(() => {
 
                 <nav class="desktop-nav" aria-label="Main navigation">
                     <Link href="/" class="active">Home</Link>
-                    <a href="#best-sellers">Shop</a>
+                    <Link href="/shop">Shop</Link>
                     <a href="#categories">Categories</a>
                     <a href="#footer">About</a>
                 </nav>
@@ -240,7 +247,7 @@ onBeforeUnmount(() => {
                 <a class="button button-primary" href="#best-sellers" @click="closeWishlist">Explore Products</a>
             </div>
             <div v-if="wishlistItems.length" class="wishlist-panel-footer">
-                <a class="button button-outline" href="/wishlist" @click="closeWishlist">View Wishlist</a>
+                <Link class="button button-outline" href="/wishlist" @click="closeWishlist">View Wishlist</Link>
             </div>
         </aside>
 
@@ -252,7 +259,7 @@ onBeforeUnmount(() => {
             </div>
             <nav class="drawer-nav">
                 <Link href="/" @click="closeMenu">Home</Link>
-                <a href="#best-sellers" @click="closeMenu">Shop</a>
+                <Link href="/shop" @click="closeMenu">Shop</Link>
                 <a href="#categories" @click="closeMenu">Categories</a>
                 <a href="#footer" @click="closeMenu">About</a>
             </nav>
@@ -356,9 +363,7 @@ onBeforeUnmount(() => {
                                 <button class="button button-primary" :disabled="!product.stock" @click="addToCart(product)">
                                     {{ product.stock ? 'Add to Cart' : 'Stock Out' }}
                                 </button>
-                                <button class="button button-outline" :disabled="!product.stock" @click="showToast('Redirecting to checkout...')">
-                                    Buy Now
-                                </button>
+                                <button class="button button-outline" :disabled="!product.stock" @click="buyNow(product)">Buy Now</button>
                             </div>
                         </div>
                     </article>
@@ -407,9 +412,7 @@ onBeforeUnmount(() => {
                             <div class="product-actions">
                                 <button class="button button-primary" :disabled="!product.stock" @click="addToCart(product)">
                                     {{ product.stock ? 'Add to Cart' : 'Stock Out' }}</button
-                                ><button class="button button-outline" :disabled="!product.stock" @click="showToast('Redirecting to checkout...')">
-                                    Buy Now
-                                </button>
+                                ><button class="button button-outline" :disabled="!product.stock" @click="buyNow(product)">Buy Now</button>
                             </div>
                         </div>
                     </article>

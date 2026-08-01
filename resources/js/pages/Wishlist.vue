@@ -50,5 +50,37 @@ function formatPrice(price: number) {
                 <Link href="/shop" class="button button-primary">Explore Products</Link>
             </div>
         </main>
+        <footer class="site-footer">
+            <div class="page-shell footer-grid">
+                <div class="footer-intro">
+                    <div class="footer-brand"><span class="brand-mark">৳</span><span class="brand-name">NovaShop</span></div>
+                    <p>A neighborhood shop's honesty, brought online, for shoppers across Bangladesh.</p>
+                </div>
+                <div>
+                    <h3>Quick links</h3>
+                    <ul>
+                        <li><Link href="/">Home</Link></li>
+                        <li><Link href="/shop">Shop</Link></li>
+                        <li><a href="#footer">Track order</a></li>
+                        <li><a href="#footer">Contact us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Categories</h3>
+                    <ul>
+                        <li><Link href="/shop">Panjabi</Link></li>
+                        <li><Link href="/shop">Saree</Link></li>
+                        <li><Link href="/shop">Kurti</Link></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>We accept</h3>
+                    <div class="payment-list">
+                        <span>Cash on Delivery</span><span>bKash</span><span>Nagad</span><span>Rocket</span><span>Visa/Mastercard</span>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom"><div class="page-shell">© 2026 NovaShop. All rights reserved.</div></div>
+        </footer>
     </div>
 </template>
