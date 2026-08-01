@@ -1,26 +1,13 @@
 <script setup lang="ts">
+import MiniCart from '@/components/MiniCart.vue';
+import { useCart, type CartProduct } from '@/composables/useCart';
 import { useWishlist, type WishlistProduct } from '@/composables/useWishlist';
 import { Head, Link } from '@inertiajs/vue3';
-import {
-    ChevronLeft,
-    ChevronRight,
-    Facebook,
-    Heart,
-    Instagram,
-    Menu,
-    Minus,
-    Plus,
-    Search,
-    ShoppingCart,
-    Star,
-    Trash2,
-    UserRound,
-    X,
-} from 'lucide-vue-next';
+import { ChevronLeft, ChevronRight, Facebook, Heart, Instagram, Menu, Search, Star, Trash2, UserRound, X } from 'lucide-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import './Home.css';
 
-type Product = WishlistProduct;
+type Product = WishlistProduct & CartProduct;
 
 const slides = [
     {
@@ -77,14 +64,8 @@ const newCollection: Product[] = [
 ];
 
 const currentSlide = ref(0);
-const cartItems = ref<(Product & { quantity: number })[]>([]);
-const cartCount = computed(() => cartItems.value.reduce((total, item) => total + item.quantity, 0));
-const cartSubtotal = computed(() => cartItems.value.reduce((total, item) => total + item.price * item.quantity, 0));
 const menuOpen = ref(false);
-const cartOpen = ref(false);
 const wishlistOpen = ref(false);
-const cartButton = ref<HTMLElement | null>(null);
-const cartPanel = ref<HTMLElement | null>(null);
 const wishlistButton = ref<HTMLElement | null>(null);
 const wishlistPanel = ref<HTMLElement | null>(null);
 const toastMessage = ref('');
@@ -93,6 +74,7 @@ let autoplayTimer: number | undefined;
 let toastTimer: number | undefined;
 
 const activeSlide = computed(() => slides[currentSlide.value]);
+const { addItem } = useCart();
 const { wishlistItems, wishlistCount, toggleWishlist: toggleWishlistItem, isInWishlist } = useWishlist();
 
 function formatPrice(price: number) {
@@ -127,22 +109,13 @@ function restartAutoplay() {
 }
 
 function addToCart(product: Product) {
-    if (!product.stock) return;
-    const existingItem = cartItems.value.find((item) => item.name === product.name);
-
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        cartItems.value.push({ ...product, quantity: 1 });
-    }
-
+    addItem(product);
     showToast('Added to cart');
 }
 
 function toggleWishlist(product?: Product) {
     if (!product) {
         wishlistOpen.value = !wishlistOpen.value;
-        cartOpen.value = false;
         return;
     }
 
@@ -154,36 +127,12 @@ function closeMenu() {
     menuOpen.value = false;
 }
 
-function removeFromCart(productName: string) {
-    cartItems.value = cartItems.value.filter((item) => item.name !== productName);
-}
-
-function updateQuantity(productName: string, change: number) {
-    const item = cartItems.value.find((cartItem) => cartItem.name === productName);
-
-    if (!item) return;
-
-    item.quantity += change;
-
-    if (item.quantity <= 0) {
-        removeFromCart(productName);
-    }
-}
-
-function closeCart() {
-    cartOpen.value = false;
-}
-
 function closeWishlist() {
     wishlistOpen.value = false;
 }
 
 function handleDocumentClick(event: MouseEvent) {
     const target = event.target as Node;
-
-    if (cartOpen.value && !cartPanel.value?.contains(target) && !cartButton.value?.contains(target)) {
-        closeCart();
-    }
 
     if (wishlistOpen.value && !wishlistPanel.value?.contains(target) && !wishlistButton.value?.contains(target)) {
         closeWishlist();
@@ -192,7 +141,6 @@ function handleDocumentClick(event: MouseEvent) {
 
 function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Escape') {
-        closeCart();
         closeWishlist();
     }
 }
@@ -259,70 +207,13 @@ onBeforeUnmount(() => {
                     <button class="icon-button account-button focus-ring" aria-label="Account">
                         <UserRound :size="20" />
                     </button>
-                    <button ref="cartButton" class="icon-button focus-ring" aria-label="Cart" :aria-expanded="cartOpen" @click="cartOpen = !cartOpen">
-                        <ShoppingCart :size="20" />
-                        <span class="count-badge">{{ cartCount }}</span>
-                    </button>
+                    <MiniCart />
                     <button class="icon-button mobile-only focus-ring" aria-label="Open menu" :aria-expanded="menuOpen" @click="menuOpen = true">
                         <Menu :size="24" />
                     </button>
                 </div>
             </div>
         </header>
-
-        <aside v-if="cartOpen" ref="cartPanel" class="cart-panel" aria-label="Shopping cart">
-            <div class="cart-panel-header">
-                <div>
-                    <h2>Your Cart ({{ cartCount }})</h2>
-                </div>
-                <button class="icon-button focus-ring" aria-label="Close cart" @click="closeCart"><X :size="20" /></button>
-            </div>
-            <div v-if="cartItems.length" class="cart-item-list">
-                <div v-for="item in cartItems" :key="item.name" class="cart-item">
-                    <img :src="`https://picsum.photos/seed/${item.seed}/120/120`" :alt="item.name" />
-                    <div class="cart-item-details">
-                        <h3>{{ item.name }}</h3>
-                        <strong>{{ formatPrice(item.price) }}</strong>
-                        <div class="cart-quantity">
-                            <button
-                                class="quantity-button focus-ring"
-                                :aria-label="`Decrease ${item.name} quantity`"
-                                @click="updateQuantity(item.name, -1)"
-                            >
-                                <Minus :size="13" />
-                            </button>
-                            <span>Qty: {{ item.quantity }}</span>
-                            <button
-                                class="quantity-button focus-ring"
-                                :aria-label="`Increase ${item.name} quantity`"
-                                @click="updateQuantity(item.name, 1)"
-                            >
-                                <Plus :size="13" />
-                            </button>
-                        </div>
-                    </div>
-                    <div class="cart-item-end">
-                        <strong>{{ formatPrice(item.price * item.quantity) }}</strong>
-                        <button class="remove-button focus-ring" :aria-label="`Remove ${item.name}`" @click="removeFromCart(item.name)">
-                            <Trash2 :size="16" />
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div v-else class="cart-empty">
-                <ShoppingCart :size="48" stroke-width="1.5" aria-hidden="true" />
-                <strong>Your cart is empty</strong>
-                <p>Looks like you haven't added anything yet.</p>
-                <a class="button button-primary" href="#best-sellers" @click="closeCart">Shop Now</a>
-            </div>
-            <div v-if="cartItems.length" class="cart-panel-footer">
-                <div class="cart-subtotal">
-                    <span>Subtotal</span><strong>{{ formatPrice(cartSubtotal) }}</strong>
-                </div>
-                <a class="button button-outline" href="#best-sellers" @click="closeCart">View Cart</a>
-                <a class="button button-primary" href="#footer" @click="closeCart">Checkout</a>
-            </div>
-        </aside>
 
         <aside v-if="wishlistOpen" ref="wishlistPanel" class="wishlist-panel" aria-label="Wishlist">
             <div class="wishlist-panel-header">
@@ -449,7 +340,9 @@ onBeforeUnmount(() => {
                             >
                         </div>
                         <div class="product-info">
-                            <h3>{{ product.name }}</h3>
+                            <h3>
+                                <Link :href="route('products.show', { slug: product.seed })">{{ product.name }}</Link>
+                            </h3>
                             <div class="rating">
                                 <span
                                     ><Star
@@ -499,7 +392,9 @@ onBeforeUnmount(() => {
                             >
                         </div>
                         <div class="product-info">
-                            <h3>{{ product.name }}</h3>
+                            <h3>
+                                <Link :href="route('products.show', { slug: product.seed })">{{ product.name }}</Link>
+                            </h3>
                             <div class="rating">
                                 <span
                                     ><Star

@@ -1,19 +1,16 @@
 <?php
 
+use App\Http\Controllers\StorefrontController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Home');
-})->name('home');
+Route::get('/', [StorefrontController::class, 'home'])->name('home');
 
-Route::get('shop', function () {
-    return Inertia::render('Home');
-})->name('shop');
+Route::get('shop', [StorefrontController::class, 'shop'])->name('shop');
 
-Route::get('wishlist', function () {
-    return Inertia::render('Wishlist');
-})->name('wishlist');
+Route::get('wishlist', [StorefrontController::class, 'wishlist'])->name('wishlist');
+
+Route::get('products/{slug}', [StorefrontController::class, 'product'])->name('products.show');
 
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');

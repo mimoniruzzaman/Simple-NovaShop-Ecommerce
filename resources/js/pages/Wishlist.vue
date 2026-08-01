@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import MiniCart from '@/components/MiniCart.vue';
 import { useWishlist } from '@/composables/useWishlist';
 import { Head, Link } from '@inertiajs/vue3';
 import { Heart, Trash2 } from 'lucide-vue-next';
@@ -17,7 +18,10 @@ function formatPrice(price: number) {
         <header class="site-header">
             <div class="page-shell header-inner">
                 <Link href="/" class="brand focus-ring"><span class="brand-mark">৳</span><span class="brand-name">NovaShop</span></Link>
-                <Link href="/" class="button button-outline">Continue Shopping</Link>
+                <div class="header-actions">
+                    <MiniCart />
+                    <Link href="/" class="button button-outline">Continue Shopping</Link>
+                </div>
             </div>
         </header>
         <main class="page-shell content-section">
