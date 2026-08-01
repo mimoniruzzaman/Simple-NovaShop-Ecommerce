@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NovaShop — Everyday shopping, honestly priced</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          green: { 900: '#0B4A32', 600: '#167D52', 100: '#DCEEE3' },
+          gold:  { 700: '#C1841E', 500: '#E4A335' },
+          paper: { 50: '#F5F7F4', 0: '#FFFFFF' },
+          ink:   { 900: '#1B221D', 500: '#5B665E' },
+          line:  { 200: '#DCE3DD' },
+          brick: { 600: '#B3392C' },
+          leaf:  { 600: '#2F8F5B' },
+          slate: { 700: '#2A4A5C' },
+        },
+        fontFamily: {
+          display: ['Fraunces', 'serif'],
+          sans: ['Inter', 'sans-serif'],
+          mono: ['"IBM Plex Mono"', 'monospace'],
+        },
+        borderRadius: { card: '12px', control: '8px' },
+        boxShadow: { float: '0 4px 16px rgba(11,74,50,0.08)' },
+      }
+    }
+  }
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { background: #F5F7F4; color: #1B221D; }
+
+  /* Weave rule — Jamdani-inspired diamond dash, single color, 8px tall */
+  .weave-rule {
+    height: 8px;
+    background-image: linear-gradient(45deg, #0B4A32 25%, transparent 25%, transparent 50%, #0B4A32 50%, #0B4A32 75%, transparent 75%, transparent);
+    background-size: 8px 8px;
+    opacity: 0.35;
+  }
+
+  /* Hang-tag price component */
+  .hangtag {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #FFFFFF;
+    border: 1.5px solid #E4A335;
+    border-radius: 8px 12px 12px 8px;
+    padding: 4px 12px 4px 16px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .hangtag::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #F5F7F4;
+    border: 1px solid #DCE3DD;
+  }
+
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .card-hover { transition: transform 150ms ease-out, box-shadow 150ms ease-out; }
+  @media (hover: hover) {
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 4px 16px rgba(11,74,50,0.08); }
+    .card-hover:hover .card-img { transform: scale(1.02); }
+  }
+  .card-img { transition: transform 150ms ease-out; }
+
+  .fade-in { animation: fadeIn 500ms ease-out; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fade-in { animation: none; }
+    .card-hover:hover, .card-hover:hover .card-img { transform: none; }
+    * { transition-duration: 0.001ms !important; }
+  }
+
+  .focus-ring:focus-visible {
+    outline: 2px solid #167D52;
+    outline-offset: 2px;
+  }
+</style>
+</head>
+<body class="font-sans text-ink-900 bg-paper-50 antialiased">
+
+<!-- ============ HEADER ============ -->
+<header id="site-header" class="sticky top-0 z-40 bg-paper-0 border-b border-transparent transition-colors">
+  <div class="max-w-[1280px] mx-auto px-4 md:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16 lg:h-20">
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-2 focus-ring rounded-control">
+        <span class="w-9 h-9 rounded-full bg-green-900 flex items-center justify-center text-gold-500 font-mono font-semibold text-lg">৳</span>
+        <span class="font-display font-semibold text-xl text-green-900">NovaShop</span>
+      </a>
+
+      <!-- Desktop nav -->
+      <nav class="hidden lg:flex items-center gap-8 font-medium text-ink-900">
+        <a href="#" class="hover:text-green-600 transition-colors focus-ring rounded">Home</a>
+        <a href="#" class="hover:text-green-600 transition-colors focus-ring rounded">Shop</a>
+        <a href="#categories" class="hover:text-green-600 transition-colors focus-ring rounded">Categories</a>
+        <a href="#" class="hover:text-green-600 transition-colors focus-ring rounded">About</a>
+      </nav>
+
+      <!-- Desktop search -->
+      <div class="hidden lg:flex items-center flex-1 max-w-xs mx-6">
+        <label class="relative w-full">
+          <span class="sr-only">Search products</span>
+          <input type="search" placeholder="Search products…"
+            class="w-full h-11 rounded-control border border-line-200 bg-paper-50 pl-10 pr-4 text-sm focus-ring focus:outline-none focus:border-green-600" />
+          <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.35-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </label>
+      </div>
+
+      <!-- Right icons -->
+      <div class="flex items-center gap-1 sm:gap-2">
+        <button id="wishlist-btn" aria-label="Wishlist" aria-pressed="false" class="relative w-11 h-11 flex items-center justify-center rounded-control hover:bg-paper-50 focus-ring">
+          <svg class="w-5 h-5 text-ink-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.8 8.6c0 4.4-8.8 9.9-8.8 9.9s-8.8-5.5-8.8-9.9C3.2 5.7 5.6 4 8 4c1.7 0 3.1.9 4 2.3C12.9 4.9 14.3 4 16 4c2.4 0 4.8 1.7 4.8 4.6z" /></svg>
+          <span id="wishlist-count" class="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-gold-500 text-white text-[11px] font-semibold hidden items-center justify-center transition-transform">0</span>
+        </button>
+        <button aria-label="Search" class="lg:hidden w-11 h-11 flex items-center justify-center rounded-control hover:bg-paper-50 focus-ring">
+          <svg class="w-5 h-5 text-ink-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.35-5.15a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+        </button>
+        <button aria-label="Account" class="hidden sm:flex w-11 h-11 items-center justify-center rounded-control hover:bg-paper-50 focus-ring">
+          <svg class="w-5 h-5 text-ink-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z" /></svg>
+        </button>
+        <button id="cart-btn" aria-label="Cart" class="relative w-11 h-11 flex items-center justify-center rounded-control hover:bg-paper-50 focus-ring">
+          <svg class="w-5 h-5 text-ink-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 4.6A1 1 0 005.6 19H19M9 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z" /></svg>
+          <span id="cart-count" class="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-gold-500 text-white text-[11px] font-semibold flex items-center justify-center transition-transform">0</span>
+        </button>
+        <button id="menu-btn" aria-label="Open menu" aria-expanded="false" class="lg:hidden w-11 h-11 flex items-center justify-center rounded-control hover:bg-paper-50 focus-ring">
+          <svg class="w-6 h-6 text-ink-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile drawer -->
+<div id="drawer-overlay" class="fixed inset-0 bg-ink-900/40 z-40 hidden lg:hidden"></div>
+<aside id="drawer" class="fixed top-0 right-0 h-full w-[82%] max-w-sm bg-paper-0 z-50 translate-x-full transition-transform duration-300 lg:hidden flex flex-col">
+  <div class="flex items-center justify-between h-16 px-5 border-b border-line-200">
+    <span class="font-display font-semibold text-lg text-green-900">Menu</span>
+    <button id="drawer-close" aria-label="Close menu" class="w-11 h-11 flex items-center justify-center rounded-control hover:bg-paper-50 focus-ring">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+    </button>
+  </div>
+  <nav class="flex flex-col p-5 gap-1 font-medium text-lg">
+    <a href="#" class="py-3 px-2 rounded-control hover:bg-paper-50 focus-ring">Home</a>
+    <a href="#" class="py-3 px-2 rounded-control hover:bg-paper-50 focus-ring">Shop</a>
+    <a href="#categories" class="py-3 px-2 rounded-control hover:bg-paper-50 focus-ring">Categories</a>
+    <a href="#" class="py-3 px-2 rounded-control hover:bg-paper-50 focus-ring">About</a>
+    <a href="#" class="py-3 px-2 rounded-control hover:bg-paper-50 focus-ring">Account</a>
+  </nav>
+  <div class="mt-auto p-5 border-t border-line-200 text-sm text-ink-500">
+    Cash on Delivery & bKash, Nagad, Rocket accepted.
+  </div>
+</aside>
+
+<main>
+
+<!-- ============ HERO CAROUSEL ============ -->
+<section aria-roledescription="carousel" aria-label="Featured offers" class="relative">
+  <div id="hero" class="relative h-[420px] sm:h-[480px] lg:h-[560px] overflow-hidden">
+
+    <!-- Slide 1 -->
+    <div class="hero-slide absolute inset-0 transition-opacity duration-500" data-state="active">
+      <img src="https://picsum.photos/seed/novashop-saree/1400/900" alt="" class="absolute inset-0 w-full h-full object-cover" />
+      <div class="absolute inset-0 bg-gradient-to-r from-green-900/90 via-green-900/50 to-transparent"></div>
+      <div class="relative h-full max-w-[1280px] mx-auto px-4 md:px-6 lg:px-8 flex items-center">
+        <div class="max-w-md">
+          <p class="text-gold-500 font-semibold text-xs uppercase tracking-wider mb-3">Eid Collection</p>
+          <h1 class="font-display font-semibold text-white text-[2.25rem] leading-[1.15] sm:text-5xl lg:text-[3.5rem] lg:leading-[1.1] mb-4">Fresh weaves, festival ready</h1>
+          <p class="text-white/85 mb-6 hidden sm:block">Handpicked sarees and panjabis, priced clearly, delivered across Bangladesh.</p>
+          <a href="#new-collection" class="inline-flex items-center justify-center h-11 px-6 rounded-control bg-gold-500 text-ink-900 font-semibold hover:bg-gold-700 hover:text-white transition-colors focus-ring">Shop the collection</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="hero-slide absolute inset-0 opacity-0 transition-opacity duration-500" data-state="inactive">
+      <img src="https://picsum.photos/seed/novashop-electronics/1400/900" alt="" class="absolute inset-0 w-full h-full object-cover" />
+      <div class="absolute inset-0 bg-gradient-to-r from-green-900/90 via-green-900/50 to-transparent"></div>
+      <div class="relative h-full max-w-[1280px] mx-auto px-4 md:px-6 lg:px-8 flex items-center">
+        <div class="max-w-md">
+          <p class="text-gold-500 font-semibold text-xs uppercase tracking-wider mb-3">New Arrivals</p>
+          <h1 class="font-display font-semibold text-white text-[2.25rem] leading-[1.15] sm:text-5xl lg:text-[3.5rem] lg:leading-[1.1] mb-4">Everyday electronics, honest prices</h1>
+          <p class="text-white/85 mb-6 hidden sm:block">From mobile accessories to home gadgets — every price tag tells you exactly what you pay.</p>
+          <a href="#best-sellers" class="inline-flex items-center justify-center h-11 px-6 rounded-control border-2 border-white text-white font-semibold hover:bg-white hover:text-green-900 transition-colors focus-ring">Explore best sellers</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="hero-slide absolute inset-0 opacity-0 transition-opacity duration-500" data-state="inactive">
+      <img src="https://picsum.photos/seed/novashop-kitchen/1400/900" alt="" class="absolute inset-0 w-full h-full object-cover" />
+      <div class="absolute inset-0 bg-gradient-to-r from-green-900/90 via-green-900/50 to-transparent"></div>
+      <div class="relative h-full max-w-[1280px] mx-auto px-4 md:px-6 lg:px-8 flex items-center">
+        <div class="max-w-md">
+          <p class="text-gold-500 font-semibold text-xs uppercase tracking-wider mb-3">Home & Kitchen</p>
+          <h1 class="font-display font-semibold text-white text-[2.25rem] leading-[1.15] sm:text-5xl lg:text-[3.5rem] lg:leading-[1.1] mb-4">Built for the everyday counter</h1>
+          <p class="text-white/85 mb-6 hidden sm:block">Cookware and storage that earns its keep, at prices that stay put.</p>
+          <a href="#categories" class="inline-flex items-center justify-center h-11 px-6 rounded-control bg-gold-500 text-ink-900 font-semibold hover:bg-gold-700 hover:text-white transition-colors focus-ring">Browse categories</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrows (md+) -->
+    <button id="hero-prev" aria-label="Previous slide" class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 items-center justify-center hover:bg-white transition-colors focus-ring">
+      <svg class="w-5 h-5 text-green-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+    </button>
+    <button id="hero-next" aria-label="Next slide" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 items-center justify-center hover:bg-white transition-colors focus-ring">
+      <svg class="w-5 h-5 text-green-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+    </button>
+
+    <!-- Dots -->
+    <div id="hero-dots" class="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2" role="tablist" aria-label="Slide navigation"></div>
+  </div>
+  <div class="weave-rule"></div>
+</section>
+
+<!-- ============ CATEGORIES ============ -->
+<section id="categories" class="max-w-[1280px] mx-auto px-4 md:px-6 lg:px-8 py-12 lg:py-16">
+  <div class="flex items-end justify-between mb-6">
+    <div>
+      <h2 class="font-display font-semibold text-2xl sm:text-3xl lg:text-4xl text-green-900">Shop by category</h2>
+      <p class="text-ink-500 mt-1">Everything sorted the way your shop shelf already is.</p>
+    </div>
+    <a href="#" class="hidden sm:inline text-green-900 font-medium hover:underline focus-ring rounded">View all</a>
+  </div>
+
+  <div class="flex gap-4 overflow-x-auto scrollbar-none pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-4 lg:grid-cols-6">
+    <!-- category cards injected by JS -->
+    <div id="category-grid" class="contents"></div>
+  </div>
+</section>
+
+<!-- ============ BEST SELLERS ============ -->
+<section id="best-sellers" class="max-w-[1280px] mx-auto px-4 md:px-6 lg:px-8 py-12 lg:py-16">
+  <div class="flex items-end justify-between mb-6">
+    <div>
+      <h2 class="font-display font-semibold text-2xl sm:text-3xl lg:text-4xl text-green-900">Best sellers</h2>
+      <p class="text-ink-500 mt-1">What Bangladeshi shoppers keep coming back for.</p>
+    </div>
+    <a href="#" class="hidden sm:inline text-green-900 font-medium hover:underline focus-ring rounded">View all</a>
+  </div>
+
+  <div id="best-sellers-row" class="flex gap-4 overflow-x-auto scrollbar-none pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"></div>
+</section>
+
+<!-- ============ NEW COLLECTION ============ -->
+<section id="new-collection" class="max-w-[1280px] mx-auto px-4 md:px-6 lg:px-8 py-12 lg:py-16">
+  <div class="mb-6">
+    <h2 class="font-display font-semibold text-2xl sm:text-3xl lg:text-4xl text-green-900">New collection</h2>
+    <p class="text-ink-500 mt-1">Fresh arrivals, added this week.</p>
+  </div>
+
+  <div id="new-collection-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+</section>
+
+<div class="weave-rule"></div>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="bg-green-900 text-white mt-4">
+  <div class="max-w-[1280px] mx-auto px-4 md:px-6 lg:px-8 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
+    <div class="col-span-2 md:col-span-1">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="w-8 h-8 rounded-full bg-gold-500 flex items-center justify-center text-green-900 font-mono font-semibold">৳</span>
+        <span class="font-display font-semibold text-lg">NovaShop</span>
+      </div>
+      <p class="text-white/70 text-sm">A neighborhood shop's honesty, brought online — for shoppers across Bangladesh.</p>
+    </div>
+    <div>
+      <h3 class="font-semibold text-sm uppercase tracking-wide text-white/60 mb-3">Quick links</h3>
+      <ul class="space-y-2 text-white/85 text-sm">
+        <li><a href="#" class="hover:text-gold-500 focus-ring rounded">Home</a></li>
+        <li><a href="#" class="hover:text-gold-500 focus-ring rounded">Shop</a></li>
+        <li><a href="#" class="hover:text-gold-500 focus-ring rounded">Track order</a></li>
+        <li><a href="#" class="hover:text-gold-500 focus-ring rounded">Contact us</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="font-semibold text-sm uppercase tracking-wide text-white/60 mb-3">Categories</h3>
+      <ul id="footer-categories" class="space-y-2 text-white/85 text-sm"></ul>
+    </div>
+    <div>
+      <h3 class="font-semibold text-sm uppercase tracking-wide text-white/60 mb-3">We accept</h3>
+      <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2.5 py-1 rounded bg-white/10 text-xs font-medium">Cash on Delivery</span>
+        <span class="px-2.5 py-1 rounded bg-white/10 text-xs font-medium">bKash</span>
+        <span class="px-2.5 py-1 rounded bg-white/10 text-xs font-medium">Nagad</span>
+        <span class="px-2.5 py-1 rounded bg-white/10 text-xs font-medium">Rocket</span>
+        <span class="px-2.5 py-1 rounded bg-white/10 text-xs font-medium">Visa/Mastercard</span>
+      </div>
+      <div class="flex gap-3">
+        <a href="#" aria-label="Facebook" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 focus-ring"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0022 12z"/></svg></a>
+        <a href="#" aria-label="Instagram" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 focus-ring"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 3.3.15 4.8 1.7 4.95 4.95.06 1.3.07 1.7.07 4.9 0 3.2 0 3.6-.07 4.9-.15 3.24-1.7 4.8-4.95 4.95-1.3.06-1.7.07-4.9.07-3.2 0-3.6 0-4.9-.07-3.26-.15-4.8-1.72-4.95-4.95-.06-1.3-.07-1.7-.07-4.9 0-3.2 0-3.6.07-4.9.15-3.25 1.7-4.8 4.95-4.95C8.4 2.2 8.8 2.2 12 2.2zM12 7a5 5 0 100 10 5 5 0 000-10zm0 8.2a3.2 3.2 0 110-6.4 3.2 3.2 0 010 6.4zM17.4 5.8a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <div class="border-t border-white/10 py-5 px-4 md:px-6 lg:px-8">
+    <p class="max-w-[1280px] mx-auto text-white/60 text-xs">© 2026 NovaShop. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Sticky add-to-cart toast -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 bg-ink-900 text-white text-sm font-medium px-5 py-3 rounded-control shadow-float z-50">
+  Added to cart
+</div>
+
+<script>
+/* ---------- Data (would come from Admin Panel / API in production) ---------- */
+const categories = [
+  { name: "Sarees & Panjabis", seed: "cat-saree", image: "saree" },
+  { name: "Electronics", seed: "cat-electronics", image: "electronics" },
+  { name: "Home & Kitchen", seed: "cat-kitchen", image: "kitchenware" },
+  { name: "Beauty & Care", seed: "cat-beauty", image: "cosmetics" },
+  { name: "Groceries", seed: "cat-grocery", image: "groceries" },
+  { name: "Kids & Toys", seed: "cat-toys", image: "toys" },
+];
+
+const bestSellers = [
+  { name: "Cotton Jamdani Saree", price: 3450, oldPrice: 4200, seed: "p-saree1", stock: true, rating: 4.6, reviews: 128 },
+  { name: "Wireless Earbuds Pro", price: 1890, oldPrice: null, seed: "p-earbuds", stock: true, rating: 4.2, reviews: 342 },
+  { name: "Non-stick Cookware Set", price: 2650, oldPrice: 3100, seed: "p-cookware", stock: true, rating: 4.8, reviews: 76 },
+  { name: "Men's Panjabi — Festive", price: 1750, oldPrice: null, seed: "p-panjabi", stock: false, rating: 4.4, reviews: 54 },
+];
+
+const newCollection = [
+  { name: "Ceramic Tea Set", price: 1250, oldPrice: null, seed: "p-tea", stock: true, rating: 4.5, reviews: 19 },
+  { name: "Kids Puzzle Cube", price: 350, oldPrice: null, seed: "p-puzzle", stock: true, rating: 4.1, reviews: 33 },
+  { name: "Herbal Face Wash", price: 480, oldPrice: 550, seed: "p-facewash", stock: true, rating: 4.7, reviews: 61 },
+  { name: "Bamboo Storage Basket", price: 690, oldPrice: null, seed: "p-basket", stock: false, rating: 4.0, reviews: 12 },
+  { name: "Handwoven Table Runner", price: 890, oldPrice: null, seed: "p-runner", stock: true, rating: 4.3, reviews: 27 },
+  { name: "Stainless Steel Water Bottle", price: 620, oldPrice: 750, seed: "p-bottle", stock: true, rating: 4.6, reviews: 88 },
+  { name: "Kids Rain Jacket", price: 940, oldPrice: null, seed: "p-jacket", stock: false, rating: 4.2, reviews: 15 },
+  { name: "Aromatic Scented Candle Set", price: 560, oldPrice: null, seed: "p-candle", stock: true, rating: 4.8, reviews: 41 },
+];
+
+function taka(n) {
+  return '৳ ' + n.toLocaleString('en-IN');
+}
+
+function hangtag(price, oldPrice) {
+  const old = oldPrice ? `<span class="block text-right text-xs text-ink-500 line-through font-mono mb-0.5">${taka(oldPrice)}</span>` : '';
+  return `
+    <div>
+      ${old}
+      <span class="hangtag text-[1.125rem] lg:text-[1.25rem] font-medium">${taka(price)}</span>
+    </div>`;
+}
+
+function stockBadge(inStock) {
+  return inStock
+    ? `<span class="inline-flex items-center gap-1 rounded-full bg-green-100 text-leaf-600 text-xs font-semibold uppercase tracking-wide px-2.5 py-1"><span class="w-1.5 h-1.5 rounded-full bg-leaf-600"></span>In Stock</span>`
+    : `<span class="inline-flex items-center rounded-full bg-line-200 text-brick-600 text-xs font-semibold uppercase tracking-wide px-2.5 py-1">Stock Out</span>`;
+}
+
+function starIcon(fillPercent) {
+  return `
+    <span class="relative inline-block w-3.5 h-3.5">
+      <svg class="absolute inset-0 w-3.5 h-3.5 text-line-200" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.2 1 5.9L10 15l-5.2 2.8 1-5.9L1.5 7.7l5.9-.8L10 1.5z"/></svg>
+      <span class="absolute inset-0 overflow-hidden" style="width:${fillPercent}%">
+        <svg class="w-3.5 h-3.5 text-green-900" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.2 1 5.9L10 15l-5.2 2.8 1-5.9L1.5 7.7l5.9-.8L10 1.5z"/></svg>
+      </span>
+    </span>`;
+}
+
+function starRating(rating, reviews) {
+  const stars = Array.from({ length: 5 }, (_, i) => {
+    const fill = Math.max(0, Math.min(1, rating - i)) * 100;
+    return starIcon(fill);
+  }).join('');
+  return `
+    <div class="flex items-center gap-1.5">
+      <span class="flex items-center gap-0.5">${stars}</span>
+      <span class="text-xs text-ink-500 font-medium">${rating.toFixed(1)} (${reviews})</span>
+    </div>`;
+}
+
+function productCard(p) {
+  return `
+  <article class="card-hover flex-none w-[46%] min-w-[160px] sm:w-auto bg-paper-0 border border-line-200 rounded-card overflow-hidden flex flex-col">
+    <div class="relative">
+      <img src="https://picsum.photos/seed/${p.seed}/500/500" alt="${p.name}" class="card-img w-full aspect-square object-cover rounded-t-card" />
+      <button aria-label="Add ${p.name} to wishlist" aria-pressed="false" class="wishlist-toggle absolute top-2 right-2 w-8 h-8 rounded-full bg-paper-0/90 flex items-center justify-center shadow-float focus-ring">
+        <svg class="w-4 h-4 text-ink-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.8 8.6c0 4.4-8.8 9.9-8.8 9.9s-8.8-5.5-8.8-9.9C3.2 5.7 5.6 4 8 4c1.7 0 3.1.9 4 2.3C12.9 4.9 14.3 4 16 4c2.4 0 4.8 1.7 4.8 4.6z" /></svg>
+      </button>
+      <div class="absolute bottom-3 right-3">${stockBadge(p.stock)}</div>
+      <div class="absolute -bottom-3 left-3">${hangtag(p.price, p.oldPrice)}</div>
+    </div>
+    <div class="pt-5 px-3.5 pb-3.5 flex flex-col gap-2 flex-1">
+      <h3 class="font-semibold text-sm sm:text-base truncate">${p.name}</h3>
+      ${starRating(p.rating, p.reviews)}
+      <div class="mt-auto flex flex-col gap-2">
+        <button
+          class="add-to-cart w-full h-11 rounded-control font-semibold text-sm transition-colors focus-ring ${p.stock ? 'bg-green-900 text-white hover:bg-green-600' : 'bg-line-200 text-ink-500 cursor-not-allowed'}"
+          ${p.stock ? '' : 'disabled aria-disabled="true"'}>
+          ${p.stock ? 'Add to Cart' : 'Stock Out'}
+        </button>
+        <button
+          class="buy-now w-full h-11 rounded-control font-semibold text-sm border transition-colors focus-ring ${p.stock ? 'border-green-900 text-green-900 hover:bg-green-100' : 'border-line-200 text-ink-500 cursor-not-allowed'}"
+          ${p.stock ? '' : 'disabled aria-disabled="true"'}>
+          Buy Now
+        </button>
+      </div>
+    </div>
+  </article>`;
+}
+
+function categoryCard(c) {
+  return `
+  <a href="#" class="flex-none w-[30%] min-w-[110px] sm:w-auto flex flex-col items-center text-center gap-2.5 group focus-ring rounded-control p-2">
+    <span class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-green-100 overflow-hidden flex items-center justify-center ring-1 ring-green-900/10 border-[1.5px] border-black shadow-float">
+      <img src="https://loremflickr.com/200/200/${c.image}" alt="" class="w-full h-full object-cover" />
+    </span>
+    <span class="font-semibold text-sm group-hover:text-green-600 transition-colors">${c.name}</span>
+  </a>`;
+}
+
+document.getElementById('category-grid').innerHTML = categories.map(categoryCard).join('');
+document.getElementById('best-sellers-row').innerHTML = bestSellers.map(productCard).join('');
+document.getElementById('new-collection-grid').innerHTML = newCollection.map(productCard).join('');
+document.getElementById('footer-categories').innerHTML = categories.slice(0,5).map(c => `<li><a href="#" class="hover:text-gold-500 focus-ring rounded">${c.name}</a></li>`).join('');
+
+/* ---------- Mobile drawer ---------- */
+const menuBtn = document.getElementById('menu-btn');
+const drawer = document.getElementById('drawer');
+const drawerOverlay = document.getElementById('drawer-overlay');
+const drawerClose = document.getElementById('drawer-close');
+
+function openDrawer() {
+  drawer.classList.remove('translate-x-full');
+  drawerOverlay.classList.remove('hidden');
+  menuBtn.setAttribute('aria-expanded', 'true');
+}
+function closeDrawer() {
+  drawer.classList.add('translate-x-full');
+  drawerOverlay.classList.add('hidden');
+  menuBtn.setAttribute('aria-expanded', 'false');
+}
+menuBtn.addEventListener('click', openDrawer);
+drawerClose.addEventListener('click', closeDrawer);
+drawerOverlay.addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+/* ---------- Sticky header shadow on scroll ---------- */
+const header = document.getElementById('site-header');
+window.addEventListener('scroll', () => {
+  header.classList.toggle('border-line-200', window.scrollY > 8);
+});
+
+/* ---------- Hero carousel ---------- */
+const slides = Array.from(document.querySelectorAll('.hero-slide'));
+const dotsWrap = document.getElementById('hero-dots');
+let current = 0;
+let autoplayTimer = null;
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+slides.forEach((_, i) => {
+  const dot = document.createElement('button');
+  dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+  dot.className = 'w-2.5 h-2.5 rounded-full transition-colors focus-ring';
+  dot.dataset.index = i;
+  dot.addEventListener('click', () => goTo(i));
+  dotsWrap.appendChild(dot);
+});
+const dots = Array.from(dotsWrap.children);
+
+function render() {
+  slides.forEach((s, i) => {
+    s.style.opacity = i === current ? '1' : '0';
+    s.dataset.state = i === current ? 'active' : 'inactive';
+  });
+  dots.forEach((d, i) => {
+    d.className = 'w-2.5 h-2.5 rounded-full transition-colors focus-ring ' + (i === current ? 'bg-gold-500' : 'bg-white/60 hover:bg-white');
+  });
+}
+function goTo(i) {
+  current = (i + slides.length) % slides.length;
+  render();
+  restartAutoplay();
+}
+function next() { goTo(current + 1); }
+function prev() { goTo(current - 1); }
+
+function restartAutoplay() {
+  if (reducedMotion) return;
+  clearInterval(autoplayTimer);
+  autoplayTimer = setInterval(next, 6000);
+}
+
+document.getElementById('hero-next').addEventListener('click', next);
+document.getElementById('hero-prev').addEventListener('click', prev);
+
+const heroEl = document.getElementById('hero');
+heroEl.addEventListener('mouseenter', () => clearInterval(autoplayTimer));
+heroEl.addEventListener('mouseleave', restartAutoplay);
+heroEl.addEventListener('touchstart', () => clearInterval(autoplayTimer), { passive: true });
+heroEl.addEventListener('touchend', restartAutoplay);
+heroEl.setAttribute('tabindex', '0');
+heroEl.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  if (e.key === 'ArrowLeft') prev();
+});
+
+render();
+restartAutoplay();
+
+/* ---------- Add to cart ---------- */
+let cartCount = 0;
+const cartCountEl = document.getElementById('cart-count');
+const toast = document.getElementById('toast');
+let toastTimer = null;
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.add-to-cart');
+  if (!btn || btn.disabled) return;
+
+  cartCount += 1;
+  cartCountEl.textContent = cartCount;
+  if (!reducedMotion) {
+    cartCountEl.style.transform = 'scale(1.35)';
+    setTimeout(() => { cartCountEl.style.transform = 'scale(1)'; }, 200);
+  }
+
+  toast.textContent = 'Added to cart';
+  toast.style.transform = 'translate(-50%, 0)';
+  toast.style.opacity = '1';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.style.transform = 'translate(-50%, 6rem)';
+    toast.style.opacity = '0';
+  }, 2500);
+});
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.buy-now');
+  if (!btn || btn.disabled) return;
+
+  toast.textContent = 'Redirecting to checkout…';
+  toast.style.transform = 'translate(-50%, 0)';
+  toast.style.opacity = '1';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.style.transform = 'translate(-50%, 6rem)';
+    toast.style.opacity = '0';
+  }, 2500);
+});
+
+/* ---------- Wishlist ---------- */
+let wishlistCount = 0;
+const wishlistCountEl = document.getElementById('wishlist-count');
+
+function setHeartFilled(svg, filled) {
+  svg.setAttribute('fill', filled ? 'currentColor' : 'none');
+  svg.classList.toggle('text-brick-600', filled);
+  svg.classList.toggle('text-ink-900', !filled);
+}
+
+document.addEventListener('click', e => {
+  const headerBtn = e.target.closest('#wishlist-btn');
+  const cardBtn = e.target.closest('.wishlist-toggle');
+  const btn = headerBtn || cardBtn;
+  if (!btn) return;
+
+  const nowActive = btn.getAttribute('aria-pressed') !== 'true';
+  btn.setAttribute('aria-pressed', String(nowActive));
+  setHeartFilled(btn.querySelector('svg'), nowActive);
+
+  wishlistCount += nowActive ? 1 : -1;
+  wishlistCountEl.textContent = wishlistCount;
+  wishlistCountEl.classList.toggle('hidden', wishlistCount <= 0);
+  wishlistCountEl.classList.toggle('flex', wishlistCount > 0);
+  if (!reducedMotion) {
+    wishlistCountEl.style.transform = 'scale(1.35)';
+    setTimeout(() => { wishlistCountEl.style.transform = 'scale(1)'; }, 200);
+  }
+});
+</script>
+
+</body>
+</html>

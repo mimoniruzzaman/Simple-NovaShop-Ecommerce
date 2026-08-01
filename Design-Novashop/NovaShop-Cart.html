@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Your Cart — NovaShop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          green: { 900: '#0B4A32', 600: '#167D52', 100: '#DCEEE3' },
+          gold:  { 700: '#C1841E', 500: '#E4A335' },
+          paper: { 50: '#F5F7F4', 0: '#FFFFFF' },
+          ink:   { 900: '#1B221D', 500: '#5B665E' },
+          line:  { 200: '#DCE3DD' },
+          brick: { 600: '#B3392C' },
+          leaf:  { 600: '#2F8F5B' },
+          slate: { 700: '#2A4A5C' },
+        },
+        fontFamily: {
+          display: ['Fraunces', 'serif'],
+          sans: ['Inter', 'sans-serif'],
+          mono: ['"IBM Plex Mono"', 'monospace'],
+        },
+        borderRadius: { card: '12px', control: '8px' },
+        boxShadow: { float: '0 4px 16px rgba(11,74,50,0.08)' },
+      }
+    }
+  }
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { background: #F5F7F4; color: #1B221D; }
+
+  /* Weave rule — Jamdani-inspired diamond dash, single color, 8px tall */
+  .weave-rule {
+    height: 8px;
+    background-image: linear-gradient(45deg, #0B4A32 25%, transparent 25%, transparent 50%, #0B4A32 50%, #0B4A32 75%, transparent 75%, transparent);
+    background-size: 8px 8px;
+    opacity: 0.35;
+  }
+
+  /* Hang-tag price component */
+  .hangtag {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #FFFFFF;
+    border: 1.5px solid #E4A335;
+    border-radius: 8px 12px 12px 8px;
+    padding: 4px 12px 4px 16px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .hangtag::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #F5F7F4;
+    border: 1px solid #DCE3DD;
+  }
+
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .fade-in { animation: fadeIn 500ms ease-out; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fade-in { animation: none; }
+    * { transition-duration: 0.001ms !important; }
+  }
+
+  .focus-ring:focus-visible {
+    outline: 2px solid #167D52;
+    outline-offset: 2px;
+  }
+
+  /* Hide native number input spin buttons — stepper controls handle qty */
+  .qty-input::-webkit-outer-spin-button,
+  .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .qty-input { -moz-appearance: textfield; }
+</style>
+</head>
+<body class="font-sans text-ink-900 bg-paper-50 antialiased">
+
+<!-- ============ HEADER ============ -->
+<header id="site-header" class="sticky top-0 z-40 bg-paper-0 border-b border-transparent transition-colors">
+  <div class="max-w-[1280px] mx-auto px-4 md:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16 lg:h-20">
+      <!-- Logo -->
+      <a href="NovaShop-HomePage-Done.html" class="flex items-center gap-2 focus-ring rounded-control">
+        <span class="w-9 h-9 rounded-full bg-green-900 flex items-center justify-center text-gold-500 font-mono font-semibold text-lg">৳</span>
+        <span class="font-display font-semibold text-xl text-green-900">NovaShop</span>
+      </a>
+
+      <!-- Desktop nav -->
+      <nav class="hidden lg:flex items-center gap-8 font-medium text-ink-900">
+        <a href="NovaShop-HomePage-Done.html" class="hover:text-green-600 transition-colors focus-ring rounded">Home</a>
+        <a href="#" class="hover:text-green-600 transition-colors focus-ring rounded">Shop</a>
+        <a href="NovaShop-HomePage-Done.html#categories" class="hover:text-green-600 transition-colors focus-ring rounded">Categories</a>
+        <a href="#" class="hover:text-green-600 transition-colors focus-ring rounded">About</a>
+      </nav>
+
+      <!-- Desktop search -->
+      <div class="hidden lg:flex items-center flex-1 max-w-xs mx-6">
+        <label class="relative w-full">
+          <span class="sr-only">Search products</span>
+          <input type="search" placeholder="Search products…"
+            class="w-full h-11 rounded-control border border-line-200 bg-paper-50 pl-10 pr-4 text-sm focus-ring focus:outline-none focus:border-green-600" />
+          <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.35-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </label>
+      </div>
+
+      <!-- Right icons -->
+      <div class="flex items-center gap-1 sm:gap-2">
+        <button id="wishlist-btn" aria-label="Wishlist" aria-pressed="false" class="relative w-11 h-11 flex items-center justify-center rounded-control hover:bg-paper-50 focus-ring">
+          <svg class="w-5 h-5 text-ink-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.8 8.6c0 4.4-8.8 9.9-8.8 9.9s-8.8-5.5-8.8-9.9C3.2 5.7 5.6 4 8 4c1.7 0 3.1.9 4 2.3C12.9 4.9 14.3 4 16 4c2.4 0 4.8 1.7 4.8 4.6z" /></svg>
+          <span id="wishlist-count" class="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-gold-500 text-white text-[11px] font-semibold hidden items-center justify-center transition-transform">0</span>
+        </button>
+        <button aria-label="Search" class="lg:hidden w-11 h-11 flex items-center justify-center rounded-control hover:bg-paper-50 focus-ring">
+          <svg class="w-5 h-5 text-ink-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.35-5.15a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+        </button>
+        <button aria-label="Account" class="hidden sm:flex w-11 h-11 items-center justify-center rounded-control hover:bg-paper-50 focus-ring">
+          <svg class="w-5 h-5 text-ink-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z" /></svg>
+        </button>
+        <a id="cart-btn" href="NovaShop-Cart.html" aria-label="Cart" aria-current="page" class="relative w-11 h-11 flex items-center justify-center rounded-control bg-paper-50 focus-ring">
+          <svg class="w-5 h-5 text-ink-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 4.6A1 1 0 005.6 19H19M9 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z" /></svg>
+          <span id="cart-count" class="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-gold-500 text-white text-[11px] font-semibold flex items-center justify-center transition-transform">0</span>
+        </a>
+        <button id="menu-btn" aria-label="Open menu" aria-expanded="false" class="lg:hidden w-11 h-11 flex items-center justify-center rounded-control hover:bg-paper-50 focus-ring">
+          <svg class="w-6 h-6 text-ink-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile drawer -->
+<div id="drawer-overlay" class="fixed inset-0 bg-ink-900/40 z-40 hidden lg:hidden"></div>
+<aside id="drawer" class="fixed top-0 right-0 h-full w-[82%] max-w-sm bg-paper-0 z-50 translate-x-full transition-transform duration-300 lg:hidden flex flex-col">
+  <div class="flex items-center justify-between h-16 px-5 border-b border-line-200">
+    <span class="font-display font-semibold text-lg text-green-900">Menu</span>
+    <button id="drawer-close" aria-label="Close menu" class="w-11 h-11 flex items-center justify-center rounded-control hover:bg-paper-50 focus-ring">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+    </button>
+  </div>
+  <nav class="flex flex-col p-5 gap-1 font-medium text-lg">
+    <a href="NovaShop-HomePage-Done.html" class="py-3 px-2 rounded-control hover:bg-paper-50 focus-ring">Home</a>
+    <a href="#" class="py-3 px-2 rounded-control hover:bg-paper-50 focus-ring">Shop</a>
+    <a href="NovaShop-HomePage-Done.html#categories" class="py-3 px-2 rounded-control hover:bg-paper-50 focus-ring">Categories</a>
+    <a href="#" class="py-3 px-2 rounded-control hover:bg-paper-50 focus-ring">About</a>
+    <a href="#" class="py-3 px-2 rounded-control hover:bg-paper-50 focus-ring">Account</a>
+  </nav>
+  <div class="mt-auto p-5 border-t border-line-200 text-sm text-ink-500">
+    Cash on Delivery & bKash, Nagad, Rocket accepted.
+  </div>
+</aside>
+
+<main>
+
+<!-- ============ PAGE HEADER ============ -->
+<div class="max-w-[1280px] mx-auto px-4 md:px-6 lg:px-8 pt-6 lg:pt-10 pb-2">
+  <nav aria-label="Breadcrumb" class="text-sm text-ink-500 mb-2">
+    <a href="NovaShop-HomePage-Done.html" class="hover:text-green-600 transition-colors focus-ring rounded">Home</a>
+    <span class="mx-1.5">/</span>
+    <span class="text-ink-900 font-medium">Cart</span>
+  </nav>
+  <h1 class="font-display font-semibold text-2xl sm:text-3xl lg:text-4xl text-green-900">Your Cart</h1>
+</div>
+
+<!-- ============ CART CONTENT ============ -->
+<section class="max-w-[1280px] mx-auto px-4 md:px-6 lg:px-8 pt-4 pb-28 lg:pb-16">
+
+  <div id="cart-content" class="hidden lg:grid lg:grid-cols-12 lg:gap-8 lg:items-start">
+    <div id="cart-items" class="lg:col-span-8 flex flex-col gap-4"></div>
+
+    <!-- Static sidebar summary — lg and up only (mobile uses the fixed bottom bar) -->
+    <aside class="hidden lg:block lg:col-span-4">
+      <div class="bg-paper-0 border border-line-200 rounded-card p-5 flex flex-col gap-4 lg:sticky lg:top-24">
+        <h2 class="font-display font-semibold text-xl text-green-900">Order Summary</h2>
+        <dl class="flex flex-col gap-2 text-sm">
+          <div class="flex justify-between items-center">
+            <dt class="text-ink-500">Subtotal</dt>
+            <dd id="summary-subtotal" class="font-mono">৳ 0</dd>
+          </div>
+          <div class="flex justify-between items-center">
+            <dt class="text-ink-500">Delivery Charge</dt>
+            <dd id="summary-delivery" class="font-mono">৳ 0</dd>
+          </div>
+        </dl>
+        <div class="border-t border-line-200 pt-4 flex justify-between items-center">
+          <span class="font-semibold">Total</span>
+          <span id="summary-total"></span>
+        </div>
+        <a href="#" id="checkout-btn" class="h-11 rounded-control bg-green-900 text-white font-semibold flex items-center justify-center hover:bg-green-600 transition-colors focus-ring">Proceed to Checkout</a>
+        <a href="NovaShop-HomePage-Done.html" class="h-11 rounded-control border-[1.5px] border-green-900 text-green-900 font-semibold flex items-center justify-center hover:bg-green-100 transition-colors focus-ring">Continue Shopping</a>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Empty state -->
+  <div id="empty-cart" class="hidden flex-col items-center text-center gap-4 py-16 lg:py-24">
+    <span class="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
+      <svg class="w-8 h-8 text-green-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 4.6A1 1 0 005.6 19H19M9 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z" /></svg>
+    </span>
+    <h2 class="font-display font-semibold text-xl sm:text-2xl text-green-900">Your cart is empty</h2>
+    <p class="text-ink-500 max-w-xs">Start adding products you love.</p>
+    <a href="NovaShop-HomePage-Done.html" class="h-11 px-6 rounded-control bg-green-900 text-white font-semibold inline-flex items-center justify-center hover:bg-green-600 transition-colors focus-ring">Continue Shopping</a>
+  </div>
+
+</section>
+
+</main>
+
+<!-- Sticky mobile order-summary bar (hidden on lg+, replaced by the sidebar card) -->
+<div id="mobile-summary-bar" class="hidden fixed bottom-0 inset-x-0 z-30 bg-paper-0 border-t border-line-200 shadow-float px-4 py-3 items-center justify-between gap-4 lg:hidden">
+  <div>
+    <span class="block text-xs text-ink-500">Total</span>
+    <span id="mobile-total"></span>
+  </div>
+  <a href="#" id="mobile-checkout-btn" class="h-11 px-6 rounded-control bg-green-900 text-white font-semibold flex items-center justify-center hover:bg-green-600 transition-colors focus-ring">Proceed to Checkout</a>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="bg-green-900 text-white mt-4">
+  <div class="max-w-[1280px] mx-auto px-4 md:px-6 lg:px-8 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
+    <div class="col-span-2 md:col-span-1">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="w-8 h-8 rounded-full bg-gold-500 flex items-center justify-center text-green-900 font-mono font-semibold">৳</span>
+        <span class="font-display font-semibold text-lg">NovaShop</span>
+      </div>
+      <p class="text-white/70 text-sm">A neighborhood shop's honesty, brought online — for shoppers across Bangladesh.</p>
+    </div>
+    <div>
+      <h3 class="font-semibold text-sm uppercase tracking-wide text-white/60 mb-3">Quick links</h3>
+      <ul class="space-y-2 text-white/85 text-sm">
+        <li><a href="NovaShop-HomePage-Done.html" class="hover:text-gold-500 focus-ring rounded">Home</a></li>
+        <li><a href="#" class="hover:text-gold-500 focus-ring rounded">Shop</a></li>
+        <li><a href="#" class="hover:text-gold-500 focus-ring rounded">Track order</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="font-semibold text-sm uppercase tracking-wide text-white/60 mb-3">Categories</h3>
+      <ul id="footer-categories" class="space-y-2 text-white/85 text-sm"></ul>
+    </div>
+    <div>
+      <h3 class="font-semibold text-sm uppercase tracking-wide text-white/60 mb-3">We accept</h3>
+      <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-2.5 py-1 rounded bg-white/10 text-xs font-medium">Cash on Delivery</span>
+        <span class="px-2.5 py-1 rounded bg-white/10 text-xs font-medium">bKash</span>
+        <span class="px-2.5 py-1 rounded bg-white/10 text-xs font-medium">Nagad</span>
+        <span class="px-2.5 py-1 rounded bg-white/10 text-xs font-medium">Rocket</span>
+        <span class="px-2.5 py-1 rounded bg-white/10 text-xs font-medium">Visa/Mastercard</span>
+      </div>
+      <div class="flex gap-3">
+        <a href="#" aria-label="Facebook" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 focus-ring"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0022 12z"/></svg></a>
+        <a href="#" aria-label="Instagram" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 focus-ring"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 3.3.15 4.8 1.7 4.95 4.95.06 1.3.07 1.7.07 4.9 0 3.2 0 3.6-.07 4.9-.15 3.24-1.7 4.8-4.95 4.95-1.3.06-1.7.07-4.9.07-3.2 0-3.6 0-4.9-.07-3.26-.15-4.8-1.72-4.95-4.95-.06-1.3-.07-1.7-.07-4.9 0-3.2 0-3.6.07-4.9.15-3.25 1.7-4.8 4.95-4.95C8.4 2.2 8.8 2.2 12 2.2zM12 7a5 5 0 100 10 5 5 0 000-10zm0 8.2a3.2 3.2 0 110-6.4 3.2 3.2 0 010 6.4zM17.4 5.8a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <div class="border-t border-white/10 py-5 px-4 md:px-6 lg:px-8">
+    <p class="max-w-[1280px] mx-auto text-white/60 text-xs">© 2026 NovaShop. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 bg-ink-900 text-white text-sm font-medium px-5 py-3 rounded-control shadow-float z-50">
+  Added to cart
+</div>
+
+<script>
+const categories = [
+  { name: "Sarees & Panjabis" }, { name: "Electronics" }, { name: "Home & Kitchen" },
+  { name: "Beauty & Care" }, { name: "Groceries" },
+];
+document.getElementById('footer-categories').innerHTML = categories.map(c => `<li><a href="#" class="hover:text-gold-500 focus-ring rounded">${c.name}</a></li>`).join('');
+
+/* ---------- Mobile drawer ---------- */
+const menuBtn = document.getElementById('menu-btn');
+const drawer = document.getElementById('drawer');
+const drawerOverlay = document.getElementById('drawer-overlay');
+const drawerClose = document.getElementById('drawer-close');
+
+function openDrawer() {
+  drawer.classList.remove('translate-x-full');
+  drawerOverlay.classList.remove('hidden');
+  menuBtn.setAttribute('aria-expanded', 'true');
+}
+function closeDrawer() {
+  drawer.classList.add('translate-x-full');
+  drawerOverlay.classList.add('hidden');
+  menuBtn.setAttribute('aria-expanded', 'false');
+}
+menuBtn.addEventListener('click', openDrawer);
+drawerClose.addEventListener('click', closeDrawer);
+drawerOverlay.addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+/* ---------- Sticky header shadow on scroll ---------- */
+const header = document.getElementById('site-header');
+window.addEventListener('scroll', () => {
+  header.classList.toggle('border-line-200', window.scrollY > 8);
+});
+
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Wishlist (header icon only on this page) ---------- */
+let wishlistCount = 0;
+const wishlistCountEl = document.getElementById('wishlist-count');
+document.getElementById('wishlist-btn').addEventListener('click', e => {
+  const btn = e.currentTarget;
+  const nowActive = btn.getAttribute('aria-pressed') !== 'true';
+  btn.setAttribute('aria-pressed', String(nowActive));
+  const svg = btn.querySelector('svg');
+  svg.setAttribute('fill', nowActive ? 'currentColor' : 'none');
+  svg.classList.toggle('text-brick-600', nowActive);
+  svg.classList.toggle('text-ink-900', !nowActive);
+  wishlistCount += nowActive ? 1 : -1;
+  wishlistCountEl.textContent = wishlistCount;
+  wishlistCountEl.classList.toggle('hidden', wishlistCount <= 0);
+  wishlistCountEl.classList.toggle('flex', wishlistCount > 0);
+});
+
+/* ---------- Toast ---------- */
+const toast = document.getElementById('toast');
+let toastTimer = null;
+function showToast(message) {
+  toast.textContent = message;
+  toast.style.transform = 'translate(-50%, 0)';
+  toast.style.opacity = '1';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.style.transform = 'translate(-50%, 6rem)';
+    toast.style.opacity = '0';
+  }, 2500);
+}
+
+/* ---------- Cart (shared with NovaShop-HomePage-Done.html via localStorage) ---------- */
+const CART_KEY = 'novashop_cart';
+const DELIVERY_CHARGE = 60;
+
+function getCart() {
+  try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+  catch (e) { return []; }
+}
+function saveCart(cart) { localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+function cartItemCount(cart) { return cart.reduce((sum, i) => sum + i.qty, 0); }
+
+function taka(n) { return '৳ ' + n.toLocaleString('en-IN'); }
+
+function hangtagHTML(price, sizeClass) {
+  return `<span class="hangtag ${sizeClass} font-medium">${taka(price)}</span>`;
+}
+
+function cartRow(item) {
+  const oldPriceHTML = item.oldPrice
+    ? `<span class="block text-xs text-ink-500 line-through font-mono mb-0.5">${taka(item.oldPrice)}</span>`
+    : '';
+  return `
+  <article class="bg-paper-0 border border-line-200 rounded-card p-4 flex flex-col sm:flex-row sm:items-center gap-4" data-seed="${item.seed}">
+    <div class="flex gap-4 sm:contents">
+      <img src="https://picsum.photos/seed/${item.seed}/200/200" alt="" class="w-20 h-20 rounded-control object-cover flex-none" />
+      <div class="flex-1 sm:w-52 sm:flex-none flex flex-col gap-1.5 justify-center">
+        <h3 class="font-semibold text-sm sm:text-base">${item.name}</h3>
+        <div>
+          ${oldPriceHTML}
+          ${hangtagHTML(item.price, 'text-sm')}
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between sm:justify-start sm:flex-1 gap-4">
+      <div class="inline-flex items-center rounded-control border border-line-200 overflow-hidden flex-none">
+        <button class="qty-minus w-11 h-11 flex items-center justify-center hover:bg-paper-50 focus-ring text-lg font-medium" aria-label="Decrease quantity for ${item.name}">−</button>
+        <input type="number" inputmode="numeric" min="1" value="${item.qty}"
+          class="qty-input w-11 h-11 text-center border-x border-line-200 font-mono text-sm focus:outline-none focus-ring"
+          aria-label="Quantity for ${item.name}" />
+        <button class="qty-plus w-11 h-11 flex items-center justify-center hover:bg-paper-50 focus-ring text-lg font-medium" aria-label="Increase quantity for ${item.name}">+</button>
+      </div>
+
+      <div class="text-right">
+        <span class="block text-xs text-ink-500 mb-1">Subtotal</span>
+        ${hangtagHTML(item.price * item.qty, 'text-base')}
+      </div>
+    </div>
+
+    <button class="remove-item h-11 px-4 rounded-control border-[1.5px] border-brick-600 text-brick-600 text-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-brick-600 hover:text-white transition-colors focus-ring sm:flex-none"
+      aria-label="Remove ${item.name} from cart">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 7h12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m2 0-1 13a1 1 0 01-1 1H8a1 1 0 01-1-1L6 7h12z" /></svg>
+      Remove
+    </button>
+  </article>`;
+}
+
+function renderCart() {
+  const cart = getCart();
+  const contentEl = document.getElementById('cart-content');
+  const emptyEl = document.getElementById('empty-cart');
+  const mobileBar = document.getElementById('mobile-summary-bar');
+  const itemsEl = document.getElementById('cart-items');
+
+  // Header badge stays in sync on every render
+  document.getElementById('cart-count').textContent = cartItemCount(cart);
+
+  if (cart.length === 0) {
+    contentEl.classList.add('hidden');
+    contentEl.classList.remove('lg:grid');
+    mobileBar.classList.add('hidden');
+    mobileBar.classList.remove('flex');
+    emptyEl.classList.remove('hidden');
+    emptyEl.classList.add('flex');
+    return;
+  }
+
+  emptyEl.classList.add('hidden');
+  emptyEl.classList.remove('flex');
+  contentEl.classList.remove('hidden');
+  contentEl.classList.add('lg:grid');
+
+  itemsEl.innerHTML = cart.map(cartRow).join('');
+
+  const subtotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const delivery = subtotal > 0 ? DELIVERY_CHARGE : 0;
+  const total = subtotal + delivery;
+
+  document.getElementById('summary-subtotal').textContent = taka(subtotal);
+  document.getElementById('summary-delivery').textContent = taka(delivery);
+  document.getElementById('summary-total').innerHTML = hangtagHTML(total, 'text-lg');
+  document.getElementById('mobile-total').innerHTML = hangtagHTML(total, 'text-base');
+
+  mobileBar.classList.remove('hidden');
+  mobileBar.classList.add('flex');
+}
+
+function updateQty(seed, updater) {
+  const cart = getCart();
+  const idx = cart.findIndex(i => i.seed === seed);
+  if (idx === -1) return;
+  updater(cart[idx]);
+  cart[idx].qty = Math.max(1, cart[idx].qty);
+  saveCart(cart);
+  renderCart();
+}
+
+document.addEventListener('click', e => {
+  const minus = e.target.closest('.qty-minus');
+  const plus = e.target.closest('.qty-plus');
+  const remove = e.target.closest('.remove-item');
+  if (!minus && !plus && !remove) return;
+
+  const row = e.target.closest('[data-seed]');
+  const seed = row.dataset.seed;
+
+  if (remove) {
+    const cart = getCart().filter(i => i.seed !== seed);
+    saveCart(cart);
+    renderCart();
+    showToast('Item removed');
+    return;
+  }
+  if (minus) updateQty(seed, item => { item.qty -= 1; });
+  if (plus) updateQty(seed, item => { item.qty += 1; });
+});
+
+document.addEventListener('change', e => {
+  const input = e.target.closest('.qty-input');
+  if (!input) return;
+  const row = input.closest('[data-seed]');
+  const seed = row.dataset.seed;
+  let val = parseInt(input.value, 10);
+  if (isNaN(val) || val < 1) val = 1;
+  updateQty(seed, item => { item.qty = val; });
+});
+
+['checkout-btn', 'mobile-checkout-btn'].forEach(id => {
+  const btn = document.getElementById(id);
+  if (btn) btn.addEventListener('click', e => {
+    e.preventDefault();
+    showToast('Checkout isn’t built yet — coming soon');
+  });
+});
+
+renderCart();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Handloom Jamdani Panjabi — Ivory &amp; Gold | NovaShop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green-900:#0B4A32; --green-600:#167D52; --green-100:#DCEEE3;
+    --gold-500:#E4A335; --gold-700:#C1841E;
+    --paper-50:#F5F7F4; --paper-0:#FFFFFF;
+    --ink-900:#1B221D; --ink-500:#5B665E;
+    --line-200:#DCE3DD; --brick-600:#B3392C; --leaf-600:#2F8F5B;
+    --radius-card:12px; --radius-control:8px;
+    --shadow-float:0 4px 16px rgba(11,74,50,0.08);
+    --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-6:24px; --sp-8:32px; --sp-12:48px; --sp-16:64px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper-50); color:var(--ink-900);
+    font-family:'Inter',sans-serif; font-size:1rem; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{margin:0;}
+  .display{font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em;}
+  .mono{font-family:'IBM Plex Mono',monospace; font-weight:500;}
+  a{color:inherit;}
+  img{max-width:100%; display:block;}
+  button{font-family:inherit; cursor:pointer;}
+  :focus-visible{outline:2px solid var(--green-600); outline-offset:2px;}
+
+  .container{max-width:1280px; margin:0 auto; padding:0 16px;}
+  @media(min-width:768px){.container{padding:0 24px;}}
+  @media(min-width:1280px){.container{padding:0 32px;}}
+
+  /* ---------- Header ---------- */
+  header.site{
+    background:var(--paper-0); border-bottom:1px solid transparent; position:sticky; top:0; z-index:40;
+    transition:border-color 150ms ease-out;
+  }
+  header.site.scrolled{border-bottom-color:var(--line-200);}
+  .header-row{display:flex; align-items:center; justify-content:space-between; height:64px; gap:var(--sp-4);}
+  @media(min-width:1024px){.header-row{height:80px;}}
+  .logo{display:flex; align-items:center; gap:8px; text-decoration:none;}
+  .logo-mark{
+    width:36px; height:36px; border-radius:999px; background:var(--green-900); color:var(--gold-500);
+    display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:1.125rem; flex-shrink:0;
+  }
+  .logo-text{font-family:'Fraunces',serif; font-weight:600; font-size:1.25rem; color:var(--green-900);}
+  .main-nav{display:none; align-items:center; gap:var(--sp-8); font-weight:500; color:var(--ink-900);}
+  @media(min-width:1024px){.main-nav{display:flex;}}
+  .main-nav a{text-decoration:none;}
+  .main-nav a:hover{color:var(--green-600);}
+  .header-search{display:none; flex:1; max-width:320px; margin:0 var(--sp-6); position:relative;}
+  @media(min-width:1024px){.header-search{display:flex;}}
+  .header-search input{
+    width:100%; height:44px; border-radius:var(--radius-control); border:1px solid var(--line-200);
+    background:var(--paper-50); padding:0 var(--sp-4) 0 40px; font-size:0.875rem; font-family:inherit; color:var(--ink-900);
+  }
+  .header-search input:focus{outline:none; border-color:var(--green-600);}
+  .header-search svg{position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--ink-500); pointer-events:none;}
+  .header-icons{display:flex; align-items:center; gap:2px;}
+  .icon-btn{
+    background:none; border:none; color:var(--ink-900); width:44px; height:44px;
+    display:flex; align-items:center; justify-content:center; position:relative; border-radius:var(--radius-control);
+  }
+  .icon-btn:hover{background:var(--paper-50);}
+  .cart-badge, .wishlist-badge{
+    position:absolute; top:2px; right:2px; background:var(--gold-500); color:#fff;
+    font-family:'Inter',sans-serif; font-weight:600; font-size:0.625rem; min-width:16px; height:16px;
+    border-radius:999px; display:flex; align-items:center; justify-content:center; padding:0 3px;
+  }
+  .wishlist-badge{display:none;}
+  .wishlist-badge.show{display:flex;}
+  @media(min-width:1024px){
+    .mobile-only{display:none !important;}
+  }
+  @media(max-width:1023px){
+    .desktop-only{display:none !important;}
+  }
+
+  /* ---------- Mobile drawer ---------- */
+  .drawer-overlay{
+    position:fixed; inset:0; background:rgba(27,34,29,0.4); z-index:40; display:none;
+  }
+  .drawer-overlay.show{display:block;}
+  @media(min-width:1024px){.drawer-overlay{display:none !important;}}
+  .drawer{
+    position:fixed; top:0; right:0; height:100%; width:82%; max-width:360px; background:var(--paper-0);
+    z-index:50; transform:translateX(100%); transition:transform 300ms ease-out; display:flex; flex-direction:column;
+  }
+  .drawer.open{transform:translateX(0);}
+  @media(min-width:1024px){.drawer{display:none !important;}}
+  .drawer-head{display:flex; align-items:center; justify-content:space-between; height:64px; padding:0 20px; border-bottom:1px solid var(--line-200);}
+  .drawer-nav{display:flex; flex-direction:column; gap:4px; padding:20px; font-weight:500; font-size:1.125rem;}
+  .drawer-nav a{text-decoration:none; color:var(--ink-900); padding:12px 8px; border-radius:var(--radius-control); display:block;}
+  .drawer-nav a:hover{background:var(--paper-50);}
+  .drawer-foot{margin-top:auto; padding:20px; border-top:1px solid var(--line-200); font-size:0.875rem; color:var(--ink-500);}
+
+  /* ---------- Breadcrumb ---------- */
+  .breadcrumb{
+    padding:var(--sp-3) 0; font-size:0.875rem; color:var(--ink-500);
+    display:flex; flex-wrap:wrap; gap:6px; align-items:center;
+  }
+  .breadcrumb a{text-decoration:none; color:var(--ink-500);}
+  .breadcrumb a:hover{color:var(--green-600); text-decoration:underline;}
+  .breadcrumb .current{color:var(--ink-900); font-weight:500;}
+  .breadcrumb .sep{color:var(--line-200);}
+
+  /* ---------- PDP main layout ---------- */
+  .pdp{padding:var(--sp-4) 0 var(--sp-16); display:grid; gap:var(--sp-8); grid-template-columns:1fr;}
+  @media(min-width:1024px){
+    .pdp{grid-template-columns: 1fr 1fr; gap:var(--sp-12); align-items:start;}
+  }
+
+  /* ---------- Gallery ---------- */
+  .gallery{position:sticky; top:80px;}
+  .gallery-main{
+    position:relative; border-radius:var(--radius-card); overflow:hidden;
+    background:var(--paper-0); border:1px solid var(--line-200); aspect-ratio:1/1;
+  }
+  .gallery-track{
+    display:flex; height:100%; overflow-x:auto; scroll-snap-type:x mandatory;
+    scrollbar-width:none;
+  }
+  .gallery-track::-webkit-scrollbar{display:none;}
+  .gallery-track img{
+    flex:0 0 100%; scroll-snap-align:start; width:100%; height:100%; object-fit:cover;
+  }
+  .gallery-dots{
+    display:flex; justify-content:center; gap:6px; margin-top:var(--sp-3);
+  }
+  .gallery-dots button{
+    width:8px; height:8px; border-radius:999px; border:none; background:var(--line-200); padding:0;
+  }
+  .gallery-dots button.active{background:var(--green-900); width:20px;}
+  .gallery-thumbs{
+    display:none; gap:var(--sp-2); margin-top:var(--sp-3);
+  }
+  @media(min-width:640px){
+    .gallery-thumbs{display:grid; grid-template-columns:repeat(4,1fr);}
+  }
+  .gallery-thumbs img{
+    aspect-ratio:1/1; object-fit:cover; border-radius:8px; border:2px solid transparent; cursor:pointer;
+  }
+  .gallery-thumbs img.active{border-color:var(--gold-500);}
+
+  /* ---------- Product info ---------- */
+  .eyebrow{
+    font-size:0.75rem; text-transform:uppercase; letter-spacing:0.04em; font-weight:600;
+    color:var(--green-600); margin-bottom:var(--sp-2);
+  }
+  .product-name{
+    font-size:1.875rem; line-height:1.2; margin-bottom:var(--sp-3);
+  }
+  @media(min-width:1024px){.product-name{font-size:2.25rem;}}
+
+  .rating-row{
+    display:flex; align-items:center; gap:8px; margin-bottom:var(--sp-4); flex-wrap:wrap;
+  }
+  .stars{display:flex; gap:2px; color:var(--gold-500);}
+  .rating-text{font-size:0.875rem; color:var(--ink-500);}
+  .rating-text .count-link{color:var(--green-600); text-decoration:underline; cursor:pointer; background:none; border:none; font:inherit; padding:0;}
+
+  /* Stock badge */
+  .badge{
+    display:inline-flex; align-items:center; gap:6px; padding:4px 10px;
+    border-radius:999px; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.04em; font-weight:600;
+  }
+  .badge.in-stock{background:var(--green-100); color:var(--leaf-600);}
+  .badge.in-stock .dot{width:6px; height:6px; border-radius:999px; background:var(--leaf-600);}
+  .badge.out-stock{background:var(--line-200); color:var(--brick-600);}
+
+  /* Hang-tag price component */
+  .price-block{margin:var(--sp-4) 0 var(--sp-6);}
+  .price-original{
+    font-family:'IBM Plex Mono',monospace; font-weight:500; color:var(--ink-500);
+    text-decoration:line-through; font-size:1.35rem; display:block; margin-bottom:4px;
+  }
+  .hang-tag{
+    display:inline-flex; align-items:center; gap:8px; position:relative;
+    background:var(--paper-0); border:1.5px solid var(--gold-500); border-radius:8px;
+    padding:10px 18px 10px 22px;
+  }
+  .hang-tag::before{
+    content:''; position:absolute; left:10px; top:50%; transform:translateY(-50%);
+    width:6px; height:6px; border-radius:999px; background:var(--paper-50); border:1px solid var(--line-200);
+  }
+  .hang-tag .amount{
+    font-family:'IBM Plex Mono',monospace; font-weight:500; font-size:1.5rem; color:var(--ink-900);
+  }
+  @media(min-width:1024px){.hang-tag .amount{font-size:1.875rem;}}
+  .save-pill{
+    display:inline-block; margin-left:10px; background:var(--gold-500); color:var(--ink-900);
+    font-size:0.75rem; font-weight:600; padding:4px 10px; border-radius:999px; vertical-align:middle;
+  }
+
+  /* Quantity selector */
+  .qty-row{display:flex; align-items:center; gap:var(--sp-4); margin-bottom:var(--sp-4); flex-wrap:wrap;}
+  .qty-label{font-size:0.875rem; font-weight:500; color:var(--ink-900);}
+  .qty-stepper{
+    display:flex; align-items:center; border:1px solid var(--line-200); border-radius:var(--radius-control);
+    overflow:hidden; background:var(--paper-0);
+  }
+  .qty-stepper button{
+    width:44px; height:44px; border:none; background:transparent; font-size:1.125rem; color:var(--green-900);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .qty-stepper button:hover{background:var(--green-100);}
+  .qty-stepper input{
+    width:44px; height:44px; border:none; border-left:1px solid var(--line-200); border-right:1px solid var(--line-200);
+    text-align:center; font-family:'IBM Plex Mono',monospace; font-size:1rem; color:var(--ink-900); background:transparent;
+  }
+
+  /* Buttons */
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    min-height:44px; padding:12px 24px; border-radius:var(--radius-control);
+    font-family:'Inter',sans-serif; font-weight:600; font-size:1rem; border:none; text-decoration:none;
+  }
+  .btn-primary{background:var(--green-900); color:#fff;}
+  .btn-primary:hover{background:var(--green-600);}
+  .btn-primary:disabled{background:var(--line-200); color:var(--ink-500); cursor:not-allowed;}
+  .btn-secondary{background:transparent; color:var(--green-900); border:1.5px solid var(--green-900);}
+  .btn-secondary:hover{background:var(--green-100);}
+  .btn-ghost{background:transparent; color:var(--ink-900); text-decoration:underline; padding:8px 4px; min-height:auto;}
+  .btn-block{width:100%;}
+
+  .add-to-cart-row{display:flex; gap:var(--sp-3); margin-bottom:var(--sp-8);}
+
+  .desc{color:var(--ink-900); font-size:1rem; line-height:1.7;}
+  .desc h3{font-family:'Inter',sans-serif; font-weight:600; font-size:1.25rem; margin-bottom:var(--sp-2);}
+  .desc ul{margin:var(--sp-2) 0; padding-left:1.2em;}
+  .desc li{margin-bottom:4px;}
+  .spec-divider{border:none; border-top:1px solid var(--line-200); margin:var(--sp-6) 0;}
+
+  /* ---------- Section headers ---------- */
+  .section{padding:var(--sp-12) 0;}
+  .section-head{margin-bottom:var(--sp-6);}
+  .section-head h2{font-size:1.5rem;}
+  @media(min-width:1024px){.section-head h2{font-size:2.25rem;}}
+  .section-head p{color:var(--ink-500); margin-top:4px;}
+
+  /* ---------- Reviews ---------- */
+  .rating-summary{
+    display:flex; flex-wrap:wrap; gap:var(--sp-8); align-items:center; padding:var(--sp-6);
+    background:var(--paper-0); border:1px solid var(--line-200); border-radius:var(--radius-card); margin-bottom:var(--sp-6);
+  }
+  .rating-big{text-align:center;}
+  .rating-big .num{font-family:'Fraunces',serif; font-weight:600; font-size:3rem; color:var(--ink-900); line-height:1;}
+  .rating-big .stars{justify-content:center; margin:8px 0 4px;}
+  .rating-big .of{font-size:0.875rem; color:var(--ink-500);}
+  .rating-bars{flex:1; min-width:200px; display:flex; flex-direction:column; gap:6px;}
+  .rating-bar-row{display:flex; align-items:center; gap:8px; font-size:0.8125rem; color:var(--ink-500);}
+  .rating-bar-row .stars-label{width:40px; flex-shrink:0;}
+  .rating-bar-track{flex:1; height:6px; background:var(--line-200); border-radius:999px; overflow:hidden;}
+  .rating-bar-fill{height:100%; background:var(--gold-500);}
+  .rating-bar-row .count{width:32px; text-align:right; flex-shrink:0;}
+
+  .review-card{
+    background:var(--paper-0); border:1px solid var(--line-200); border-radius:var(--radius-card);
+    padding:var(--sp-4); margin-bottom:var(--sp-4);
+  }
+  .review-top{display:flex; justify-content:space-between; align-items:flex-start; gap:var(--sp-3); margin-bottom:8px; flex-wrap:wrap;}
+  .reviewer-name{font-weight:600; font-size:0.9375rem;}
+  .review-date{font-size:0.8125rem; color:var(--ink-500);}
+  .verified{
+    display:inline-flex; align-items:center; gap:4px; font-size:0.75rem; color:var(--leaf-600); font-weight:600; margin-top:2px;
+  }
+  .review-body{font-size:0.9375rem; color:var(--ink-900); line-height:1.6;}
+  .review-stars{margin-bottom:6px;}
+
+  /* ---------- Related products ---------- */
+  .related-grid{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:var(--sp-4);
+  }
+  @media(min-width:768px){.related-grid{grid-template-columns:repeat(4,1fr);}}
+  .p-card{
+    background:var(--paper-0); border:1px solid var(--line-200); border-radius:var(--radius-card); overflow:hidden;
+    transition:transform .15s ease-out, box-shadow .15s ease-out;
+  }
+  @media(hover:hover){
+    .p-card:hover{box-shadow:var(--shadow-float); transform:translateY(-4px);}
+    .p-card:hover img{transform:scale(1.02);}
+  }
+  .p-card-media{position:relative; aspect-ratio:1/1; overflow:hidden;}
+  .p-card-media img{width:100%; height:100%; object-fit:cover; border-radius:12px 12px 0 0; transition:transform .15s ease-out;}
+  .p-card-tag{position:absolute; bottom:-14px; left:10px;}
+  .p-card-tag .hang-tag{padding:6px 12px 6px 18px; border-width:1.5px;}
+  .p-card-tag .hang-tag .amount{font-size:1.125rem;}
+  .p-card-body{padding:var(--sp-4) var(--sp-3) var(--sp-3); padding-top:20px;}
+  .p-card-name{font-weight:600; font-size:0.9375rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:8px;}
+  .p-card-body .badge{margin-bottom:10px;}
+  .p-card-body .btn{width:100%; font-size:0.875rem; padding:10px 16px;}
+
+  /* ---------- Sticky mobile add-to-cart bar ---------- */
+  .sticky-bar{
+    position:fixed; bottom:0; left:0; right:0; background:var(--paper-0); border-top:1px solid var(--line-200);
+    box-shadow:var(--shadow-float); padding:var(--sp-3) var(--sp-4); display:flex; align-items:center; gap:var(--sp-3); z-index:50;
+  }
+  .sticky-bar .amount{font-size:1.25rem;}
+  @media(min-width:1024px){.sticky-bar{display:none;}}
+  @media(max-width:1023px){ body{padding-bottom:76px;} }
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:fixed; left:50%; bottom:90px; transform:translate(-50%,20px); opacity:0;
+    background:var(--green-900); color:#fff; padding:12px 20px; border-radius:var(--radius-control);
+    font-size:0.9375rem; font-weight:500; box-shadow:var(--shadow-float); z-index:60; pointer-events:none;
+    transition:opacity .2s ease-out, transform .2s ease-out;
+  }
+  .toast.show{opacity:1; transform:translate(-50%,0);}
+  @media(min-width:1024px){.toast{bottom:32px;}}
+
+  /* ---------- Weave rule ---------- */
+  .weave{height:8px; width:100%; background-repeat:repeat-x; background-size:16px 8px;
+    background-image:linear-gradient(135deg, var(--line-200) 25%, transparent 25%), linear-gradient(225deg, var(--line-200) 25%, transparent 25%);
+  }
+
+  /* ---------- Footer ---------- */
+  footer.site{background:var(--green-900); color:rgba(255,255,255,0.85); padding:var(--sp-12) 0 var(--sp-8); font-size:0.875rem;}
+  footer.site .foot-grid{display:grid; gap:var(--sp-6); grid-template-columns:1fr; margin-bottom:var(--sp-8);}
+  @media(min-width:768px){footer.site .foot-grid{grid-template-columns:repeat(4,1fr);}}
+  footer.site h4{color:#fff; font-family:'Inter',sans-serif; font-weight:600; font-size:0.9375rem; margin-bottom:var(--sp-3);}
+  footer.site a{opacity:0.85; text-decoration:none; display:block; margin-bottom:8px;}
+  footer.site a:hover{opacity:1; text-decoration:underline;}
+  .foot-bottom{border-top:1px solid rgba(255,255,255,0.15); padding-top:var(--sp-4); font-size:0.8125rem; opacity:0.7;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site" id="siteHeader">
+  <div class="container header-row">
+    <a href="#" class="logo">
+      <span class="logo-mark">৳</span>
+      <span class="logo-text">NovaShop</span>
+    </a>
+
+    <nav class="main-nav">
+      <a href="#">Home</a>
+      <a href="#">Shop</a>
+      <a href="#categories">Categories</a>
+      <a href="#">About</a>
+    </nav>
+
+    <label class="header-search">
+      <span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">Search products</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" placeholder="Search products…">
+    </label>
+
+    <div class="header-icons">
+      <button class="icon-btn" id="wishlistBtn" aria-label="Wishlist" aria-pressed="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.8 8.6c0 4.4-8.8 9.9-8.8 9.9s-8.8-5.5-8.8-9.9C3.2 5.7 5.6 4 8 4c1.7 0 3.1.9 4 2.3C12.9 4.9 14.3 4 16 4c2.4 0 4.8 1.7 4.8 4.6z"/></svg>
+        <span class="wishlist-badge" id="wishlistBadge">0</span>
+      </button>
+      <button class="icon-btn mobile-only" aria-label="Search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button class="icon-btn desktop-only" aria-label="Account">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </button>
+      <button class="icon-btn" aria-label="Cart, 2 items">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span class="cart-badge">2</span>
+      </button>
+      <button class="icon-btn mobile-only" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <span class="logo-text">Menu</span>
+    <button class="icon-btn" id="drawerClose" aria-label="Close menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <nav class="drawer-nav">
+    <a href="#">Home</a>
+    <a href="#">Shop</a>
+    <a href="#categories">Categories</a>
+    <a href="#">About</a>
+    <a href="#">Account</a>
+  </nav>
+  <div class="drawer-foot">Cash on Delivery &amp; bKash, Nagad, Rocket accepted.</div>
+</aside>
+
+<main class="container">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="#">Home</a><span class="sep">›</span>
+    <a href="#">Shop</a><span class="sep">›</span>
+    <a href="#">Panjabi</a><span class="sep">›</span>
+    <span class="current">Handloom Jamdani Panjabi — Ivory &amp; Gold</span>
+  </nav>
+
+  <div class="pdp">
+    <!-- Gallery -->
+    <div class="gallery">
+      <div class="gallery-main">
+        <div class="gallery-track" id="galleryTrack">
+          <img src="https://images.unsplash.com/photo-1622470953794-aa9c70b0fb9d?w=800&q=80" alt="Handloom Jamdani Panjabi, front view, ivory with gold motif">
+          <img src="https://images.unsplash.com/photo-1622445275576-721325763afe?w=800&q=80" alt="Panjabi collar and placket detail">
+          <img src="https://images.unsplash.com/photo-1618886614638-80e3c103d31a?w=800&q=80" alt="Panjabi fabric weave close-up">
+          <img src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=80" alt="Model wearing the panjabi, three-quarter view">
+        </div>
+      </div>
+      <div class="gallery-dots mobile-only" id="galleryDots"></div>
+      <div class="gallery-thumbs" id="galleryThumbs"></div>
+    </div>
+
+    <!-- Info -->
+    <div class="info">
+      <div class="eyebrow">Panjabi · Men's Fashion</div>
+      <h1 class="product-name display">Handloom Jamdani Panjabi — Ivory &amp; Gold</h1>
+
+      <div class="rating-row">
+        <span class="stars" aria-hidden="true">★★★★★</span>
+        <span class="rating-text"><strong>4.6</strong> · <button class="count-link" onclick="document.getElementById('reviews').scrollIntoView({behavior:'smooth'})">142 reviews</button></span>
+        <span class="badge in-stock"><span class="dot"></span>In Stock</span>
+      </div>
+
+      <div class="price-block">
+        <span class="price-original mono" id="priceOriginal">৳3,200</span>
+        <span class="hang-tag">
+          <span class="amount" id="priceAmount">৳2,850</span>
+        </span>
+        <span class="save-pill" id="saveAmount">Save ৳350</span>
+      </div>
+
+      <div class="qty-row">
+        <span class="qty-label">Quantity</span>
+        <div class="qty-stepper">
+          <button type="button" aria-label="Decrease quantity" onclick="stepQty(-1)">−</button>
+          <input type="text" id="qtyInput" value="1" inputmode="numeric" aria-label="Quantity" readonly>
+          <button type="button" aria-label="Increase quantity" onclick="stepQty(1)">+</button>
+        </div>
+      </div>
+
+      <div class="add-to-cart-row desktop-only">
+        <button class="btn btn-primary" onclick="showToast()">Add to Cart</button>
+        <button class="btn btn-secondary" onclick="buyNow()">Buy Now</button>
+      </div>
+
+      <hr class="spec-divider">
+
+      <div class="desc">
+        <h3>Description</h3>
+        <p>Hand-woven on traditional looms in Narayanganj, this panjabi pairs an ivory cotton base with a fine gold jamdani motif at the yoke and cuffs — the kind of detail that reads as quiet craftsmanship rather than shine.</p>
+        <ul>
+          <li>100% handloom cotton, breathable for humid weather</li>
+          <li>Regular fit, mandarin collar, single chest pocket</li>
+          <li>Motif is woven in, not printed — won't fade or crack with wash</li>
+          <li>Hand wash cold or dry clean; iron on reverse</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Reviews -->
+<section class="section" id="reviews" style="background:var(--paper-0); border-top:1px solid var(--line-200); border-bottom:1px solid var(--line-200);">
+  <div class="container">
+    <div class="section-head">
+      <h2 class="display">Customer Reviews</h2>
+      <p>What people are saying about this panjabi</p>
+    </div>
+
+    <div class="rating-summary">
+      <div class="rating-big">
+        <div class="num">4.6</div>
+        <div class="stars" aria-hidden="true">★★★★★</div>
+        <div class="of">out of 5 · 142 reviews</div>
+      </div>
+      <div class="rating-bars">
+        <div class="rating-bar-row"><span class="stars-label">5 star</span><span class="rating-bar-track"><span class="rating-bar-fill" style="width:78%"></span></span><span class="count">111</span></div>
+        <div class="rating-bar-row"><span class="stars-label">4 star</span><span class="rating-bar-track"><span class="rating-bar-fill" style="width:14%"></span></span><span class="count">20</span></div>
+        <div class="rating-bar-row"><span class="stars-label">3 star</span><span class="rating-bar-track"><span class="rating-bar-fill" style="width:5%"></span></span><span class="count">7</span></div>
+        <div class="rating-bar-row"><span class="stars-label">2 star</span><span class="rating-bar-track"><span class="rating-bar-fill" style="width:2%"></span></span><span class="count">2</span></div>
+        <div class="rating-bar-row"><span class="stars-label">1 star</span><span class="rating-bar-track"><span class="rating-bar-fill" style="width:1%"></span></span><span class="count">2</span></div>
+      </div>
+    </div>
+
+    <div class="review-card">
+      <div class="review-top">
+        <div>
+          <div class="reviewer-name">Rafiqul Islam</div>
+          <div class="verified">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            Verified Purchase
+          </div>
+        </div>
+        <div class="review-date">July 12, 2026</div>
+      </div>
+      <div class="review-stars stars" aria-hidden="true">★★★★★</div>
+      <p class="review-body">Fabric feels genuinely handloom, not the stiff machine-woven kind you get on other sites. Wore it to a wedding and got asked twice where it was from.</p>
+    </div>
+
+    <div class="review-card">
+      <div class="review-top">
+        <div>
+          <div class="reviewer-name">Tasnim Ahmed</div>
+          <div class="verified">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            Verified Purchase
+          </div>
+        </div>
+        <div class="review-date">July 3, 2026</div>
+      </div>
+      <div class="review-stars stars" aria-hidden="true">★★★★☆</div>
+      <p class="review-body">Good quality overall. Runs slightly large — I'd size down if you're between sizes. Delivery was quick, three days to Mymensingh.</p>
+    </div>
+
+    <div class="review-card">
+      <div class="review-top">
+        <div>
+          <div class="reviewer-name">Shirin Akter</div>
+        </div>
+        <div class="review-date">June 28, 2026</div>
+      </div>
+      <div class="review-stars stars" aria-hidden="true">★★★★★</div>
+      <p class="review-body">Bought this for my husband. The gold motif is subtle in person, not gaudy at all. Very happy with it.</p>
+    </div>
+
+    <button class="btn btn-ghost">Load more reviews</button>
+  </div>
+</section>
+
+<!-- Related products -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2 class="display">You may also like</h2>
+      <p>More from Panjabi &amp; Men's Fashion</p>
+    </div>
+
+    <div class="related-grid">
+      <article class="p-card">
+        <div class="p-card-media">
+          <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?w=500&q=80" alt="Navy blue cotton panjabi">
+          <div class="p-card-tag"><span class="hang-tag"><span class="amount">৳1,950</span></span></div>
+        </div>
+        <div class="p-card-body">
+          <div class="p-card-name">Navy Cotton Panjabi</div>
+          <span class="badge in-stock"><span class="dot"></span>In Stock</span>
+          <button class="btn btn-primary">Add to Cart</button>
+        </div>
+      </article>
+
+      <article class="p-card">
+        <div class="p-card-media">
+          <img src="https://images.unsplash.com/photo-1603252109303-2751441dd157?w=500&q=80" alt="Cream linen panjabi with embroidery">
+          <div class="p-card-tag"><span class="hang-tag"><span class="amount">৳2,400</span></span></div>
+        </div>
+        <div class="p-card-body">
+          <div class="p-card-name">Cream Linen Panjabi, Embroidered</div>
+          <span class="badge in-stock"><span class="dot"></span>In Stock</span>
+          <button class="btn btn-primary">Add to Cart</button>
+        </div>
+      </article>
+
+      <article class="p-card">
+        <div class="p-card-media">
+          <img src="https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&q=80" alt="Maroon silk panjabi">
+          <div class="p-card-tag"><span class="hang-tag"><span class="amount">৳3,100</span></span></div>
+        </div>
+        <div class="p-card-body">
+          <div class="p-card-name">Maroon Silk-Blend Panjabi</div>
+          <span class="badge out-stock">Stock Out</span>
+          <button class="btn btn-primary" disabled>Add to Cart</button>
+        </div>
+      </article>
+
+      <article class="p-card">
+        <div class="p-card-media">
+          <img src="https://images.unsplash.com/photo-1622519407650-3df9883f76a5?w=500&q=80" alt="Grey formal panjabi">
+          <div class="p-card-tag"><span class="hang-tag"><span class="amount">৳2,150</span></span></div>
+        </div>
+        <div class="p-card-body">
+          <div class="p-card-name">Slate Grey Formal Panjabi</div>
+          <span class="badge in-stock"><span class="dot"></span>In Stock</span>
+          <button class="btn btn-primary">Add to Cart</button>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="weave"></div>
+
+<footer class="site">
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <h4>NovaShop</h4>
+        <a href="#">About Us</a>
+        <a href="#">Contact</a>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <a href="#">Panjabi</a>
+        <a href="#">Saree</a>
+        <a href="#">New Collection</a>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <a href="#">Track Order</a>
+        <a href="#">Returns</a>
+        <a href="#">FAQ</a>
+      </div>
+      <div>
+        <h4>Payment Methods</h4>
+        <a href="#">Cash on Delivery</a>
+        <a href="#">bKash · Nagad · Rocket · Cards (SSLCommerz)</a>
+      </div>
+    </div>
+    <div class="foot-bottom">© 2026 NovaShop. All rights reserved.</div>
+  </div>
+</footer>
+
+<!-- Sticky mobile Add to Cart bar -->
+<div class="sticky-bar mobile-only">
+  <span class="hang-tag"><span class="amount" id="stickyAmount">৳2,850</span></span>
+  <button class="btn btn-primary" style="flex:1;" onclick="showToast()">Add to Cart</button>
+</div>
+
+<div class="toast" id="toast">Added to cart</div>
+
+<script>
+  // Quantity stepper (cart convenience only, no stock validation per PRD §7.4)
+  const UNIT_PRICE = 2850;
+  const UNIT_ORIGINAL = 3200;
+
+  function formatTaka(n){
+    return '৳' + n.toLocaleString('en-US');
+  }
+
+  function updatePrices(qty){
+    const total = UNIT_PRICE * qty;
+    const totalOriginal = UNIT_ORIGINAL * qty;
+    const saved = totalOriginal - total;
+
+    document.getElementById('priceAmount').textContent = formatTaka(total);
+    document.getElementById('priceOriginal').textContent = formatTaka(totalOriginal);
+    document.getElementById('saveAmount').textContent = 'Save ' + formatTaka(saved);
+    document.getElementById('stickyAmount').textContent = formatTaka(total);
+  }
+
+  function stepQty(delta){
+    const input = document.getElementById('qtyInput');
+    let val = parseInt(input.value, 10) || 1;
+    val = Math.max(1, val + delta);
+    input.value = val;
+    updatePrices(val);
+  }
+
+  // Buy Now: adds the current quantity to cart, then proceeds straight to checkout
+  function buyNow(){
+    showToast();
+    // In the wired-up app this routes to /checkout with this item pre-added to the cart
+    window.location.hash = 'checkout';
+  }
+
+  // Add to cart toast
+  let toastTimer;
+  function showToast(){
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+    const badge = document.querySelector('.cart-badge');
+    if (badge) {
+      const current = parseInt(badge.textContent, 10) || 0;
+      badge.textContent = current + (parseInt(document.getElementById('qtyInput').value, 10) || 1);
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        badge.style.transition = 'transform .2s ease-out';
+        badge.style.transform = 'scale(1.4)';
+        setTimeout(() => badge.style.transform = 'scale(1)', 200);
+      }
+    }
+  }
+
+  // Gallery dots + thumbnails sync with swipeable track
+  const track = document.getElementById('galleryTrack');
+  const images = track.querySelectorAll('img');
+  const dotsWrap = document.getElementById('galleryDots');
+  const thumbsWrap = document.getElementById('galleryThumbs');
+
+  images.forEach((img, i) => {
+    const dot = document.createElement('button');
+    dot.setAttribute('aria-label', 'Go to image ' + (i + 1));
+    if (i === 0) dot.classList.add('active');
+    dot.onclick = () => scrollToImage(i);
+    dotsWrap.appendChild(dot);
+
+    const thumb = img.cloneNode();
+    thumb.removeAttribute('style');
+    if (i === 0) thumb.classList.add('active');
+    thumb.onclick = () => scrollToImage(i);
+    thumbsWrap.appendChild(thumb);
+  });
+
+  function scrollToImage(i){
+    track.scrollTo({ left: track.clientWidth * i, behavior: 'smooth' });
+  }
+
+  track.addEventListener('scroll', () => {
+    const i = Math.round(track.scrollLeft / track.clientWidth);
+    dotsWrap.querySelectorAll('button').forEach((d, idx) => d.classList.toggle('active', idx === i));
+    thumbsWrap.querySelectorAll('img').forEach((t, idx) => t.classList.toggle('active', idx === i));
+  });
+
+  // ---------- Header: mobile drawer ----------
+  const menuBtn = document.getElementById('menuBtn');
+  const drawer = document.getElementById('drawer');
+  const drawerOverlay = document.getElementById('drawerOverlay');
+  const drawerClose = document.getElementById('drawerClose');
+
+  function openDrawer(){
+    drawer.classList.add('open');
+    drawerOverlay.classList.add('show');
+    menuBtn.setAttribute('aria-expanded', 'true');
+  }
+  function closeDrawer(){
+    drawer.classList.remove('open');
+    drawerOverlay.classList.remove('show');
+    menuBtn.setAttribute('aria-expanded', 'false');
+  }
+  menuBtn.addEventListener('click', openDrawer);
+  drawerClose.addEventListener('click', closeDrawer);
+  drawerOverlay.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+  // ---------- Header: shadow/border on scroll ----------
+  const siteHeader = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    siteHeader.classList.toggle('scrolled', window.scrollY > 8);
+  });
+
+  // ---------- Header: wishlist toggle ----------
+  const wishlistBtn = document.getElementById('wishlistBtn');
+  const wishlistBadge = document.getElementById('wishlistBadge');
+  let wishlistCount = 0;
+  wishlistBtn.addEventListener('click', () => {
+    const nowActive = wishlistBtn.getAttribute('aria-pressed') !== 'true';
+    wishlistBtn.setAttribute('aria-pressed', String(nowActive));
+    const svg = wishlistBtn.querySelector('svg');
+    svg.setAttribute('fill', nowActive ? 'currentColor' : 'none');
+    svg.style.color = nowActive ? 'var(--brick-600)' : '';
+    wishlistCount += nowActive ? 1 : -1;
+    wishlistBadge.textContent = wishlistCount;
+    wishlistBadge.classList.toggle('show', wishlistCount > 0);
+  });
+</script>
+
+</body>
+</html>
